@@ -5,7 +5,7 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import { Actions, YokosawaHandRangeTier } from '@/const/const';
-import { createStyles, makeStyles } from "@mui/styles";
+// import { createStyles, makeStyles } from "@mui/styles";
 
 class PropActionSelector {
     eventHandler: ((event: propsEventHandler) => void) | undefined;
@@ -19,54 +19,54 @@ class propsEventHandler {
     }
 }
 
-// スタイルを定義
-const handCellStyles = makeStyles(() =>
-    createStyles({
-        tier1Cell: {
-            justifyContent: "center",
-            backgroundColor: '#191970'
-        },
-        tier2Cell: {
-            justifyContent: "center",
-            backgroundColor: '#FF0000'
-        },
-        tier3Cell: {
-            justifyContent: "center",
-            color: '#000000',
-            backgroundColor: '#FFD700'
-        },
-        tier4Cell: {
-            justifyContent: "center",
-            backgroundColor: '#228B22'
-        },
-        tier5Cell: {
-            justifyContent: "center",
-            color: '#000000',
-            backgroundColor: '#1E90FF'
-        },
-        tier6Cell: {
-            justifyContent: "center",
-            color: '#000000',
-            backgroundColor: '#FFFFFF'
-        },
-        tier7Cell: {
-            justifyContent: "center",
-            color: '#000000',
-            backgroundColor: '#D8BFD8'
-        },
-        tier8Cell: {
-            justifyContent: "center",
-            color: '#000000',
-            backgroundColor: '#696969'
-        },
-        select: {
-            justifyContent: "center",
-        },
-    }),
-);
+// // スタイルを定義
+// const handCellStyles = makeStyles(() =>
+//     createStyles({
+//         tier1Cell: {
+//             justifyContent: "center",
+//             backgroundColor: '#191970'
+//         },
+//         tier2Cell: {
+//             justifyContent: "center",
+//             backgroundColor: '#FF0000'
+//         },
+//         tier3Cell: {
+//             justifyContent: "center",
+//             color: '#000000',
+//             backgroundColor: '#FFD700'
+//         },
+//         tier4Cell: {
+//             justifyContent: "center",
+//             backgroundColor: '#228B22'
+//         },
+//         tier5Cell: {
+//             justifyContent: "center",
+//             color: '#000000',
+//             backgroundColor: '#1E90FF'
+//         },
+//         tier6Cell: {
+//             justifyContent: "center",
+//             color: '#000000',
+//             backgroundColor: '#FFFFFF'
+//         },
+//         tier7Cell: {
+//             justifyContent: "center",
+//             color: '#000000',
+//             backgroundColor: '#D8BFD8'
+//         },
+//         tier8Cell: {
+//             justifyContent: "center",
+//             color: '#000000',
+//             backgroundColor: '#696969'
+//         },
+//         select: {
+//             justifyContent: "center",
+//         },
+//     }),
+// );
 
 export default function ActionSelector(prop: PropActionSelector) {
-    const styles = handCellStyles();
+    // const styles = handCellStyles();
     const [tier, setTier] = useState<YokosawaHandRangeTier>(YokosawaHandRangeTier.TIER_7);
     const [action, setAction] = useState<Actions>(Actions.CALL);
     const [selectStyle, setSelectStyle] = useState('');
@@ -90,35 +90,35 @@ export default function ActionSelector(prop: PropActionSelector) {
         const str: keyof typeof YokosawaHandRangeTier = event.target.value;
         setTier(event.target.value);
         // console.log('ActionSelector handleChange', tier);
-        switch (YokosawaHandRangeTier[str]) {
-            case YokosawaHandRangeTier.TIER_1:
-                setSelectStyle(styles.tier1Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_2:
-                setSelectStyle(styles.tier2Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_3:
-                setSelectStyle(styles.tier3Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_4:
-                setSelectStyle(styles.tier4Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_5:
-                setSelectStyle(styles.tier5Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_6:
-                setSelectStyle(styles.tier6Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_7:
-                setSelectStyle(styles.tier7Cell);
-                break;
-            case YokosawaHandRangeTier.TIER_8:
-                setSelectStyle(styles.tier8Cell);
-                break;
-            default:
-                setSelectStyle(styles.tier8Cell);
-                break;
-        }
+        // switch (YokosawaHandRangeTier[str]) {
+        //     case YokosawaHandRangeTier.TIER_1:
+        //         setSelectStyle(styles.tier1Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_2:
+        //         setSelectStyle(styles.tier2Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_3:
+        //         setSelectStyle(styles.tier3Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_4:
+        //         setSelectStyle(styles.tier4Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_5:
+        //         setSelectStyle(styles.tier5Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_6:
+        //         setSelectStyle(styles.tier6Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_7:
+        //         setSelectStyle(styles.tier7Cell);
+        //         break;
+        //     case YokosawaHandRangeTier.TIER_8:
+        //         setSelectStyle(styles.tier8Cell);
+        //         break;
+        //     default:
+        //         setSelectStyle(styles.tier8Cell);
+        //         break;
+        // }
         callback(str, action);
         // callback(YokosawaHandRangeTier[str], action);
     };
@@ -147,7 +147,7 @@ export default function ActionSelector(prop: PropActionSelector) {
     const keys = Object.keys(YokosawaHandRangeTier).filter((v) => isNaN(Number(v)));
     const actions = Object.keys(Actions).filter((v) => isNaN(Number(v)));
     // console.log(keys);  // [A,B,C]
-
+    const red = '#FF0000';
     return (
         <div>
             <Grid container spacing={1}>
@@ -165,23 +165,23 @@ export default function ActionSelector(prop: PropActionSelector) {
                             {keys.map((c: string) => {
                                 switch (c) {
                                     case 'TIER_1':
-                                        return <MenuItem value={c} className={styles.tier1Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background:'#191970'}}>{c}</MenuItem>
                                     case 'TIER_2':
-                                        return <MenuItem value={c} className={styles.tier2Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#FFD700', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_3':
-                                        return <MenuItem value={c} className={styles.tier3Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background:'#228B22'}}>{c}</MenuItem>
                                     case 'TIER_4':
-                                        return <MenuItem value={c} className={styles.tier4Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background:'#1E90FF'}}>{c}</MenuItem>
                                     case 'TIER_5':
-                                        return <MenuItem value={c} className={styles.tier5Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#FFFFFF', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_6':
-                                        return <MenuItem value={c} className={styles.tier6Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#D8BFD8', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_7':
-                                        return <MenuItem value={c} className={styles.tier7Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_8':
-                                        return <MenuItem value={c} className={styles.tier8Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
                                     default:
-                                        return <MenuItem value={c} className={styles.tier8Cell}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
                                 }
                             })}
                         </Select>
@@ -200,7 +200,7 @@ export default function ActionSelector(prop: PropActionSelector) {
                             onChange={handleActionChange}
                         >
                             {actions.map((c: string) => {
-                                return <MenuItem value={c} className={styles.select}>{c}</MenuItem>
+                                return <MenuItem value={c} >{c}</MenuItem>
                             })}
                         </Select>
                     </FormControl>
