@@ -167,17 +167,17 @@ export default function ActionSelector(prop: PropActionSelector) {
                                     case 'TIER_1':
                                         return <MenuItem value={c} sx={{background:'#191970'}}>{c}</MenuItem>
                                     case 'TIER_2':
-                                        return <MenuItem value={c} sx={{background: '#FFD700', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#FF0000'}}>{c}</MenuItem>
                                     case 'TIER_3':
-                                        return <MenuItem value={c} sx={{background:'#228B22'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#FFD700', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_4':
-                                        return <MenuItem value={c} sx={{background:'#1E90FF'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#228B22'}}>{c}</MenuItem>
                                     case 'TIER_5':
-                                        return <MenuItem value={c} sx={{background: '#FFFFFF', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#1E90FF'}}>{c}</MenuItem>
                                     case 'TIER_6':
-                                        return <MenuItem value={c} sx={{background: '#D8BFD8', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#FFFFFF', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_7':
-                                        return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{background: '#D8BFD8', color: '#000000'}}>{c}</MenuItem>
                                     case 'TIER_8':
                                         return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
                                     default:

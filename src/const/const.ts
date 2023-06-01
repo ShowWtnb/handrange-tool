@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from "@mui/styles";
+// import { createStyles, makeStyles } from "@mui/styles";
 
 class PorkerHand {
     PowerNumber: number;
@@ -224,40 +224,40 @@ export const PorkerHands: PorkerHand[][] = [
     ],
 ]
 
-// スタイルを定義
-export const handCellStyles = makeStyles(() =>
-    createStyles({
-        tier1Cell: {
-            backgroundColor: '#191970'
-        },
-        tier2Cell: {
-            backgroundColor: '#FF0000'
-        },
-        tier3Cell: {
-            color: '#000000',
-            backgroundColor: '#FFD700'
-        },
-        tier4Cell: {
-            backgroundColor: '#228B22'
-        },
-        tier5Cell: {
-            color: '#000000',
-            backgroundColor: '#1E90FF'
-        },
-        tier6Cell: {
-            color: '#000000',
-            backgroundColor: '#FFFFFF'
-        },
-        tier7Cell: {
-            color: '#000000',
-            backgroundColor: '#D8BFD8'
-        },
-        tier8Cell: {
-            color: '#000000',
-            backgroundColor: '#696969'
-        },
-    }),
-);
+// // スタイルを定義
+// export const handCellStyles = makeStyles(() =>
+//     createStyles({
+//         tier1Cell: {
+//             backgroundColor: '#191970'
+//         },
+//         tier2Cell: {
+//             backgroundColor: '#FF0000'
+//         },
+//         tier3Cell: {
+//             color: '#000000',
+//             backgroundColor: '#FFD700'
+//         },
+//         tier4Cell: {
+//             backgroundColor: '#228B22'
+//         },
+//         tier5Cell: {
+//             color: '#000000',
+//             backgroundColor: '#1E90FF'
+//         },
+//         tier6Cell: {
+//             color: '#000000',
+//             backgroundColor: '#FFFFFF'
+//         },
+//         tier7Cell: {
+//             color: '#000000',
+//             backgroundColor: '#D8BFD8'
+//         },
+//         tier8Cell: {
+//             color: '#000000',
+//             backgroundColor: '#696969'
+//         },
+//     }),
+// );
 
 // // スタイルを定義
 // const handCellStyles = makeStyles(() =>
