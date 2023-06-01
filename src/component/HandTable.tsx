@@ -35,7 +35,7 @@ export default function HandTable(prop: PropHandTable) {
     const [tierRange, setTierRange] = useState(prop.tierRange);
 
     useEffect(()=>{
-        console.log('HandTable useEffect prop.tierRange')
+        // console.log('HandTable useEffect prop.tierRange')
         setTierRange(prop.tierRange);
     },[prop.tierRange])
     function GetCell(tier: YokosawaHandRangeTier, str: string) {

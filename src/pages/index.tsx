@@ -25,7 +25,7 @@ export default function Home() {
         switch (event.action) {
           case Actions.CALL:
             // Callならひとつ上のTier
-            console.log('set range 2', [t2, t2]);
+            // console.log('set range 2', [t2, t2]);
             setTierRange2([t2, t2]);
             break;
           case Actions.RERAISE:
