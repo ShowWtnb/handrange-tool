@@ -10,6 +10,7 @@ export default function Home() {
         <meta name="description" content="Simplified hand range chart of no-limit hold'em" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       <Grid container spacing={2} alignItems="center" justifyContent="center">
         <Grid item xs={12}>
