@@ -5,6 +5,8 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import { Actions, YokosawaHandRangeTier } from '@/const/const';
+import { Box, Checkbox, FormControlLabel } from '@mui/material';
+import { alignProperty } from '@mui/material/styles/cssUtils';
 // import { createStyles, makeStyles } from "@mui/styles";
 
 class PropActionSelector {
@@ -13,9 +15,15 @@ class PropActionSelector {
 class propsEventHandler {
     tier: YokosawaHandRangeTier;
     action: Actions;
-    constructor(tier: YokosawaHandRangeTier, action: Actions) {
+    isBB: boolean;
+    // constructor(tier: YokosawaHandRangeTier, action: Actions) {
+    //     this.tier = tier;
+    //     this.action = action;
+    // }
+    constructor(tier: YokosawaHandRangeTier, action: Actions, isBB: boolean) {
         this.tier = tier;
         this.action = action;
+        this.isBB = isBB;
     }
 }
 
@@ -71,14 +79,19 @@ export default function ActionSelector(prop: PropActionSelector) {
     const [action, setAction] = useState<Actions>(Actions.CALL);
     const [selectStyle, setSelectStyle] = useState('');
     const [selectActionStyle, setSelectActionStyle] = useState('');
+    const [isBB, setIsBB] = useState(false);
 
-    const callback = (t:any, a:any) => {
+    const callback = (t: any, a: any, b?: boolean) => {
         const strT: keyof typeof YokosawaHandRangeTier = t;
         t = YokosawaHandRangeTier[strT];
         const strA: keyof typeof Actions = a;
         a = Actions[strA];
 
-        var arg:propsEventHandler =  new propsEventHandler(t, a);
+        if (b == undefined) {
+            b = isBB;
+        }
+
+        var arg: propsEventHandler = new propsEventHandler(t, a, b);
         // console.log('ActionSelector callback', arg);
         if (prop.eventHandler != undefined) {
             prop.eventHandler(arg);
@@ -89,36 +102,6 @@ export default function ActionSelector(prop: PropActionSelector) {
         // console.log(event.target);
         const str: keyof typeof YokosawaHandRangeTier = event.target.value;
         setTier(event.target.value);
-        // console.log('ActionSelector handleChange', tier);
-        // switch (YokosawaHandRangeTier[str]) {
-        //     case YokosawaHandRangeTier.TIER_1:
-        //         setSelectStyle(styles.tier1Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_2:
-        //         setSelectStyle(styles.tier2Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_3:
-        //         setSelectStyle(styles.tier3Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_4:
-        //         setSelectStyle(styles.tier4Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_5:
-        //         setSelectStyle(styles.tier5Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_6:
-        //         setSelectStyle(styles.tier6Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_7:
-        //         setSelectStyle(styles.tier7Cell);
-        //         break;
-        //     case YokosawaHandRangeTier.TIER_8:
-        //         setSelectStyle(styles.tier8Cell);
-        //         break;
-        //     default:
-        //         setSelectStyle(styles.tier8Cell);
-        //         break;
-        // }
         callback(str, action);
         // callback(YokosawaHandRangeTier[str], action);
     };
@@ -128,26 +111,19 @@ export default function ActionSelector(prop: PropActionSelector) {
         setAction(event.target.value);
         const str: keyof typeof Actions = event.target.value;
         callback(tier, str);
-        // callback(tier, Actions[str]);
-        // switch (event.target.value) {
-        //     case 'CALL':
-        //         // setSelectActionStyle();
-        //         // prop.eventHandler({ tier: tier, action: Actions.CALL });
-        //         callback(new propsEventHandler(tier, Actions.CALL));
-        //         break;
-        //     case 'RERAISE':
-        //         // setSelectActionStyle();
-        //         // prop.eventHandler({ tier: tier, action: Actions.RERAISE });
-        //         callback(new propsEventHandler(tier, Actions.RERAISE));
-        //         break;
-        //     default:
-        //         break;
-        // }
     }
+
+    const onBBCheckBoxChanged = (event: any) => {
+        // console.log(event.target.checked);
+        setIsBB((event.target.checked as boolean));
+        callback(tier, action, (event.target.checked as boolean));
+    }
+
     const keys = Object.keys(YokosawaHandRangeTier).filter((v) => isNaN(Number(v)));
     const actions = Object.keys(Actions).filter((v) => isNaN(Number(v)));
     // console.log(keys);  // [A,B,C]
     const red = '#FF0000';
+    const label = { inputProps: { 'aria-label': 'BB' } };
     return (
         <div>
             <Grid container spacing={1}>
@@ -165,23 +141,23 @@ export default function ActionSelector(prop: PropActionSelector) {
                             {keys.map((c: string) => {
                                 switch (c) {
                                     case 'TIER_1':
-                                        return <MenuItem value={c} sx={{background:'#191970'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#191970' }}>{c}</MenuItem>
                                     case 'TIER_2':
-                                        return <MenuItem value={c} sx={{background: '#FF0000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#FF0000' }}>{c}</MenuItem>
                                     case 'TIER_3':
-                                        return <MenuItem value={c} sx={{background: '#FFD700', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#FFD700', color: '#000000' }}>{c}</MenuItem>
                                     case 'TIER_4':
-                                        return <MenuItem value={c} sx={{background: '#228B22'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#228B22' }}>{c}</MenuItem>
                                     case 'TIER_5':
-                                        return <MenuItem value={c} sx={{background: '#1E90FF'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#1E90FF' }}>{c}</MenuItem>
                                     case 'TIER_6':
-                                        return <MenuItem value={c} sx={{background: '#FFFFFF', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#FFFFFF', color: '#000000' }}>{c}</MenuItem>
                                     case 'TIER_7':
-                                        return <MenuItem value={c} sx={{background: '#D8BFD8', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#D8BFD8', color: '#000000' }}>{c}</MenuItem>
                                     case 'TIER_8':
-                                        return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
                                     default:
-                                        return <MenuItem value={c} sx={{background: '#696969', color: '#000000'}}>{c}</MenuItem>
+                                        return <MenuItem value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
                                 }
                             })}
                         </Select>
@@ -189,21 +165,35 @@ export default function ActionSelector(prop: PropActionSelector) {
 
                 </Grid>
                 <Grid item xs={6}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Action</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={action}
-                            label="Open"
-                            className={selectActionStyle}
-                            onChange={handleActionChange}
-                        >
-                            {actions.map((c: string) => {
-                                return <MenuItem value={c} >{c}</MenuItem>
-                            })}
-                        </Select>
-                    </FormControl>
+                    <Grid container spacing={1} alignItems="center" justifyContent="center">
+                        <Grid item xs={6}>
+                            <Box >
+                                <FormControlLabel
+                                    label="BB"
+                                    control={
+                                        <Checkbox checked={isBB} onChange={onBBCheckBoxChanged} />
+                                    }
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Action</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={action}
+                                    label="Open"
+                                    className={selectActionStyle}
+                                    onChange={handleActionChange}
+                                >
+                                    {actions.map((c: string) => {
+                                        return <MenuItem value={c} >{c}</MenuItem>
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>
