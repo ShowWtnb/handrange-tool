@@ -1,8 +1,17 @@
 import Head from 'next/head'
 import HandRangeToolHome from '@/component/HandRangeToolHome'
-import { Button, Grid, Typography } from '@mui/material'
+import { AppBar, Button, Grid, Tab, Tabs, Typography } from '@mui/material'
+import { useState } from 'react';
+import { a11yProps } from '@/component/utils/a11yProps';
+import { TabPanel } from '@/component/utils/TabPanel';
+import PowerNumberChartHome from '@/component/power_number/PowerNumberChartHome';
 
 export default function Home() {
+  const [value, setValue] = useState(0);
+  const handleChange = (event: any, newValue: any) => {
+    setValue(newValue);
+  };
+
   return (
     <div>
       <Head>
@@ -12,21 +21,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
-      <Grid container spacing={2} alignItems="center" justifyContent="center">
-        <Grid item xs={12}>
-          <HandRangeToolHome />
-        </Grid>
-        <Grid item xs={2} >
-          <Typography >
-            {'参考動画：'}
-          </Typography>
-        </Grid>
-        <Grid item xs={8}>
-          {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/7vudIk1J_g0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> */}
-        <Button target="_blank" href="https://youtu.be/7vudIk1J_g0">【初公開】ヨコサワが実際に使っているハンドランキングがこちらです。</Button>
-        </Grid>
-        <Grid item xs={2}/>
-      </Grid>
+      <AppBar position="static">
+        <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+          <Tab label="Hand Range chart" {...a11yProps(0)} />
+          <Tab label="Power Number chart" {...a11yProps(1)} />
+          <Tab label="Item Three" {...a11yProps(2)} />
+        </Tabs>
+      </AppBar>
+      <TabPanel value={value} index={0}>
+        <HandRangeToolHome />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <PowerNumberChartHome />
+      </TabPanel>
+      {/* <TabPanel value={value} index={2}>
+        Item Three
+      </TabPanel> */}
+
     </div>
   )
 }

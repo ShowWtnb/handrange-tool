@@ -1,6 +1,6 @@
 import HandTable from '@/component/HandTable'
 import ActionSelector from '@/component/ActionSelector'
-import { Grid } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
 import { useState } from 'react'
 import { Actions, YokosawaHandRangeTier } from '@/const/const'
 
@@ -26,7 +26,7 @@ export default function HandRangeToolHome() {
                             } else if (t == YokosawaHandRangeTier.TIER_5) {
                                 // CO(TIER_5)からのレイズに対してはTIER_6以上でコールできる
                                 setTierRange2([YokosawaHandRangeTier.TIER_6, YokosawaHandRangeTier.TIER_4]);
-                            }else{
+                            } else {
                                 // どこからのレイズでもTIER_5以上でコールできる
                                 setTierRange2([YokosawaHandRangeTier.TIER_5, t2]);
                             }
@@ -68,18 +68,31 @@ export default function HandRangeToolHome() {
     }
     return (
         <div>
-            <Grid container spacing={1}>
-                <Grid item xs={12} />
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
                 <Grid item xs={12}>
-                    <ActionSelector eventHandler={handleActionChange} />
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} />
+                        <Grid item xs={12}>
+                            <ActionSelector eventHandler={handleActionChange} />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <HandTable tierRange={tierRange1} />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <HandTable tierRange={tierRange2} />
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid item xs={6}>
-                    <HandTable tierRange={tierRange1} />
+                <Grid item xs={2} >
+                    <Typography >
+                        {'参考動画：'}
+                    </Typography>
                 </Grid>
-                <Grid item xs={6}>
-                    <HandTable tierRange={tierRange2} />
+                <Grid item xs={8}>
+                    {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/7vudIk1J_g0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> */}
+                    <Button target="_blank" href="https://youtu.be/7vudIk1J_g0">【初公開】ヨコサワが実際に使っているハンドランキングがこちらです。</Button>
                 </Grid>
-
+                <Grid item xs={2} />
             </Grid>
         </div>
     )
