@@ -22,24 +22,23 @@ type License = {
     url?: string
     path?: string
     licenseFile?: string
+    licenseText?: string
+    copyright?: string
 }
 
 type LicenseInfos = {
-    key: string
-    license: License
+    licenses: Map<string, License>
 }
 
 export const LicenseScreen = (prop: any) => {
     const licenseKeys = Object.keys(licenseFile);
+    const licenseVal = licenseFile.toString();
+    console.log('LicenseScreen licenseVal', licenseVal);
 
     function handleClose(event: {}, reason: "backdropClick" | "escapeKeyDown"): void {
         // event
         prop.handleClose(event, reason);
     }
-
-    // const licenses = JSON.parse(licenseFile) as LicenseInfos;
-    // const licensesStr:string = licenseFile.text();
-    // const licenses = JSON.parse(licensesStr) as LicenseInfos;
 
     return (
         <Modal
@@ -52,22 +51,27 @@ export const LicenseScreen = (prop: any) => {
                 <div>
                     <Grid margin={0} container spacing={0} alignItems="center" justifyContent="center">
                         {licenseKeys.map((value) => {
-                            // const license = licenseFile[value].licenses
-                            // const publisher = licenseFile[value].publisher
-                            // const licenseText = licenseFile[value].licenseText
-                            // const copyright = licenseFile[value].copyright
+                            const licenseObj: License = licenseFile[value as keyof typeof licenseFile];
+                            console.log('LicenseScreen licenseVal', licenseObj);
+                            // if(!licenseObj){
+                            //     continue;
+                            // }
+                            const license = licenseObj.licenses
+                            const publisher = licenseObj.publisher
+                            const licenseText = licenseObj.licenseText
+                            const copyright = licenseObj.copyright
                             return (
                                 <div>
                                     <Grid container spacing={0} alignItems="center" justifyContent="center">
-                                        {/* <Grid item xs={4}>
+                                        <Grid item xs={12}>
                                             <Typography>{value} published by {publisher}</Typography>
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={6}>
                                             <Typography>{licenseText}</Typography>
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={6}>
                                             <Typography>{copyright}</Typography>
-                                        </Grid> */}
+                                        </Grid>
                                     </Grid>
                                     <Divider />
                                 </div>
