@@ -5,7 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { PorkerHands, YokosawaHandRangeTier } from "@/const/const";
+import { PorkerHands, YokosawaHandRangeTier } from "@/const/const_poker";
 
 const fontsize: number = 10.5;
 
@@ -25,23 +25,23 @@ export default function HandTable(prop: PropHandTable) {
         // console.log(tier, str);
         switch (tier) {
             case YokosawaHandRangeTier.TIER_1:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#191970' }}  >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#191970' }}  >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_2:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#FF0000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#FF0000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_3:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#FFD700', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#FFD700', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_4:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#228B22' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#228B22' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_5:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#1E90FF' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#1E90FF' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_6:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#FFFFFF', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#FFFFFF', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_7:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#D8BFD8', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#D8BFD8', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_8:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969', color: '#000000' }}   >{str}</TableCell>;
             default:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969', color: '#000000' }}   >{str}</TableCell>;
         }
 
     }
@@ -50,23 +50,23 @@ export default function HandTable(prop: PropHandTable) {
         // console.log(tier, str);
         switch (tier) {
             case YokosawaHandRangeTier.TIER_1:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}  >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}  >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_2:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_3:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_4:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_5:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_6:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_7:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_8:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             default:
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
         }
 
     }
@@ -82,8 +82,8 @@ export default function HandTable(prop: PropHandTable) {
     const GetHandRange = () => {
         return (
             <TableBody>
-                {PorkerHands.map((row) => (
-                    <TableRow
+                {PorkerHands.map((row, i = 0) => (
+                    <TableRow key={i++}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 30 }}
                     >
                         {row.map((c) => {

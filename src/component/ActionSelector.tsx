@@ -3,8 +3,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
-import { useState } from 'react';
-import { Actions, YokosawaHandRangeTier } from '@/const/const';
+import { useEffect, useState } from 'react';
+import { Actions, YokosawaHandRangeTier } from '@/const/const_poker';
 import { Box, Checkbox, FormControlLabel } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 // import { createStyles, makeStyles } from "@mui/styles";
@@ -75,8 +75,8 @@ class propsEventHandler {
 
 export default function ActionSelector(prop: PropActionSelector) {
     // const styles = handCellStyles();
-    const [tier, setTier] = useState<YokosawaHandRangeTier>(YokosawaHandRangeTier.TIER_7);
-    const [action, setAction] = useState<Actions>(Actions.CALL);
+    const [tier, setTier] = useState<string>('TIER_6');
+    const [action, setAction] = useState<string>('CALL');
     const [selectStyle, setSelectStyle] = useState('');
     const [selectActionStyle, setSelectActionStyle] = useState('');
     const [isBB, setIsBB] = useState(false);
@@ -122,8 +122,12 @@ export default function ActionSelector(prop: PropActionSelector) {
     const keys = Object.keys(YokosawaHandRangeTier).filter((v) => isNaN(Number(v)));
     const actions = Object.keys(Actions).filter((v) => isNaN(Number(v)));
     // console.log(keys);  // [A,B,C]
-    const red = '#FF0000';
-    const label = { inputProps: { 'aria-label': 'BB' } };
+    // const red = '#FF0000';
+    // const label = { inputProps: { 'aria-label': 'BB' } };
+
+    useEffect(()=>{
+        callback(tier, action);
+    },[]);
     return (
         <div>
             <Grid container spacing={1}>
@@ -141,23 +145,23 @@ export default function ActionSelector(prop: PropActionSelector) {
                             {keys.map((c: string) => {
                                 switch (c) {
                                     case 'TIER_1':
-                                        return <MenuItem value={c} sx={{ background: '#191970' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#191970' }}>{c}</MenuItem>
                                     case 'TIER_2':
-                                        return <MenuItem value={c} sx={{ background: '#FF0000' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#FF0000' }}>{c}</MenuItem>
                                     case 'TIER_3':
-                                        return <MenuItem value={c} sx={{ background: '#FFD700', color: '#000000' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#FFD700', color: '#000000' }}>{c}</MenuItem>
                                     case 'TIER_4':
-                                        return <MenuItem value={c} sx={{ background: '#228B22' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#228B22' }}>{c}</MenuItem>
                                     case 'TIER_5':
-                                        return <MenuItem value={c} sx={{ background: '#1E90FF' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#1E90FF' }}>{c}</MenuItem>
                                     case 'TIER_6':
-                                        return <MenuItem value={c} sx={{ background: '#FFFFFF', color: '#000000' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#FFFFFF', color: '#000000' }}>{c}</MenuItem>
                                     case 'TIER_7':
-                                        return <MenuItem value={c} sx={{ background: '#D8BFD8', color: '#000000' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#D8BFD8', color: '#000000' }}>{c}</MenuItem>
                                     case 'TIER_8':
-                                        return <MenuItem value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
                                     default:
-                                        return <MenuItem value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
                                 }
                             })}
                         </Select>
@@ -188,7 +192,7 @@ export default function ActionSelector(prop: PropActionSelector) {
                                     onChange={handleActionChange}
                                 >
                                     {actions.map((c: string) => {
-                                        return <MenuItem value={c} >{c}</MenuItem>
+                                        return <MenuItem key={c} value={c} >{c}</MenuItem>
                                     })}
                                 </Select>
                             </FormControl>

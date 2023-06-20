@@ -2,7 +2,7 @@ import HandTable from '@/component/HandTable'
 import ActionSelector from '@/component/ActionSelector'
 import { Button, Grid, Typography } from '@mui/material'
 import { useState } from 'react'
-import { Actions, YokosawaHandRangeTier } from '@/const/const'
+import { Actions, YokosawaHandRangeTier } from '@/const/const_poker'
 
 export default function HandRangeToolHome() {
     const [tierRange1, setTierRange1] = useState([YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_1]);
@@ -88,13 +88,10 @@ export default function HandRangeToolHome() {
                         {'参考動画：'}
                     </Typography>
                 </Grid>
-                <Grid item xs={8}>
-                    {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/7vudIk1J_g0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> */}
+                <Grid item xs={10}>
                     <Button target="_blank" href="https://youtu.be/7vudIk1J_g0">【初公開】ヨコサワが実際に使っているハンドランキングがこちらです。</Button>
                 </Grid>
-                <Grid item xs={2} />
             </Grid>
         </div>
-    )
-
+    );
 }

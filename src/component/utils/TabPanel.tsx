@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
 export interface TabPanelProps {
-    children?: React.ReactNode;
+    children?: any;
     index: any;
     value: any;
 }
@@ -19,7 +19,13 @@ export function TabPanel(props: TabPanelProps) {
         >
             {value === index && (
                 <Box p={3}>
-                    <Typography>{children}</Typography>
+                    {/* <Typography>{children}</Typography> */}
+                    {/*
+                        // サンプルではchildrenに渡されるのが文字要素なのでTypographyで囲ってよいが、
+                        // 文字要素以外のコンポーネントを渡すとpの中にdivが含まれているHydration failedが起こる
+                        // https://v4.mui.com/ja/components/tabs/
+                    */}
+                    {children}
                 </Box>
             )}
         </div>

@@ -1,4 +1,5 @@
-import { GetTurboColor, PorkerHands, YokosawaHandRangeTier } from "@/const/const";
+import { PorkerHands, YokosawaHandRangeTier } from "@/const/const_poker";
+import { GetTurboColor } from "@/const/theme/TurboColor";
 import { AttachMoney, MoneyOff } from "@mui/icons-material";
 import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, ToggleButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -14,18 +15,18 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
 
     function GetCell(tier: YokosawaHandRangeTier, str: string, pow: number) {
         if (selected) {
-            if (pow < parseInt(powNum)) {
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969' }}  >{str}<br />{pow}</TableCell>;
+            if (pow < parseFloat(powNum)) {
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969' }}  >{str}<br />{pow}</TableCell>;
             } else {
                 var color = GetTurboColor(pow, 140);
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: color }}  >{str}<br />{pow}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: color }}  >{str}<br />{pow}</TableCell>;
             }
         } else {
             if (pow == -1) {
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969' }}  >{str}<br />{pow}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969' }}  >{str}<br />{pow}</TableCell>;
             } else {
                 var color = GetTurboColor(pow, 140);
-                return <TableCell align="center" sx={{ fontSize: fontsize, width: 5, background: color }}  >{str}<br />{pow}</TableCell>;
+                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: color }}  >{str}<br />{pow}</TableCell>;
             }
         }
 
@@ -33,8 +34,8 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
     const GetHandRange = () => {
         return (
             <TableBody>
-                {PorkerHands.map((row) => (
-                    <TableRow
+                {PorkerHands.map((row, i = 0) => (
+                    <TableRow key={i++}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 30 }}
                     >
                         {row.map((c) => {
@@ -68,10 +69,10 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
     }
 
     const calc = () => {
-        var bbCnt = 1.0 + 0.5 + parseInt(ante);
-        var m = parseInt(stack) / bbCnt;
+        var bbCnt = 1.0 + 0.5 + parseFloat(ante);
+        var m = parseFloat(stack) / bbCnt;
         setMVal(m.toString());
-        var pow = m * parseInt(playerCount);
+        var pow = m * parseFloat(playerCount);
         setPowNum(pow.toString());
     }
     const GetIcon = () => {
@@ -94,7 +95,6 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         id="filled-number"
                                         label="Your stack(BB)"
                                         type="number"
-                                        defaultValue={100.0}
                                         value={stack}
                                         InputProps={{
                                             sx: {
@@ -111,7 +111,6 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         id="filled-number"
                                         label="Ante(BB)"
                                         type="number"
-                                        defaultValue={1.5}
                                         value={ante}
                                         InputProps={{
                                             sx: {
@@ -128,7 +127,6 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         id="filled-read-only-input"
                                         label="M value"
                                         type="number"
-                                        defaultValue="1"
                                         value={mVal}
                                         InputProps={{
                                             readOnly: true,
@@ -145,7 +143,6 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         id="filled-number"
                                         label="Player behind count"
                                         type="number"
-                                        defaultValue={3}
                                         value={playerCount}
                                         InputProps={{
                                             sx: {
@@ -162,7 +159,6 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         id="filled-read-only-input"
                                         label="Power Number"
                                         type="number"
-                                        defaultValue="1"
                                         value={powNum}
                                         InputProps={{
                                             readOnly: true,
@@ -179,6 +175,7 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         value="check"
                                         selected={selected}
                                         onChange={() => {
+                                            calc();
                                             setSelected(!selected);
                                         }}
                                     >
@@ -201,11 +198,10 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                         {'参考動画：'}
                     </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={10}>
                     {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/7vudIk1J_g0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> */}
                     <Button target="_blank" href="https://youtu.be/VtdTuVJEXLU">トーナメントに勝つために必要なたった４つのこと。</Button>
                 </Grid>
-                <Grid item xs={2} />
             </Grid>
         </div>
     );
