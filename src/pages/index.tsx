@@ -6,7 +6,7 @@ import { a11yProps as allyProps } from '@/component/utils/a11yProps';
 import { TabPanel } from '@/component/utils/TabPanel';
 import PowerNumberChartHome from '@/component/power_number/PowerNumberChartHome';
 import OddsCalculatorHome from '@/component/odds_calculator/OddsCalculatorHome';
-import { ContentPaste, FormatListBulleted, GppMaybe, Menu, MenuOpen, Shuffle } from '@mui/icons-material';
+import { ContentPaste, Copyright, FormatListBulleted, GppMaybe, Menu, MenuOpen, Policy, Shuffle } from '@mui/icons-material';
 import { LicenseScreen } from '@/component/utils/LicenseViewer';
 
 export default function Home() {
@@ -25,6 +25,14 @@ export default function Home() {
     setLicenseScreenOpened(true);
   }
   function onLicenseClose(): void {
+    // setDrawerOpened(!drawerOpened);
+    setLicenseScreenOpened(false);
+  }
+  function onDisclaimerClicked(event: any): void {
+    // setDrawerOpened(!drawerOpened);
+    setLicenseScreenOpened(true);
+  }
+  function onDisclaimerClose(): void {
     // setDrawerOpened(!drawerOpened);
     setLicenseScreenOpened(false);
   }
@@ -74,9 +82,16 @@ export default function Home() {
             <MenuOpen />
           </IconButton>
         </AppBar>
+        {/* <MenuItem onClick={onDisclaimerClicked}>
+          <ListItemIcon>
+            <Policy fontSize="medium" />
+          </ListItemIcon>
+          <ListItemText>Disclaimer</ListItemText>
+          <Typography variant="body2" color="text.secondary">{''}</Typography>
+        </MenuItem> */}
         <MenuItem onClick={onLicenseClicked}>
           <ListItemIcon>
-            <GppMaybe fontSize="medium" />
+            <Copyright fontSize="medium" />
           </ListItemIcon>
           <ListItemText>Licenses</ListItemText>
           <Typography variant="body2" color="text.secondary">{''}</Typography>

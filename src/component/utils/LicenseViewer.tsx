@@ -15,6 +15,20 @@ const style = {
     overflow: 'scroll',
 };
 
+type License = {
+    licenses?: string
+    repository?: string
+    publisher?: string
+    url?: string
+    path?: string
+    licenseFile?: string
+}
+
+type LicenseInfos = {
+    key: string
+    license: License
+}
+
 export const LicenseScreen = (prop: any) => {
     const licenseKeys = Object.keys(licenseFile);
 
@@ -22,6 +36,10 @@ export const LicenseScreen = (prop: any) => {
         // event
         prop.handleClose(event, reason);
     }
+
+    // const licenses = JSON.parse(licenseFile) as LicenseInfos;
+    // const licensesStr:string = licenseFile.text();
+    // const licenses = JSON.parse(licensesStr) as LicenseInfos;
 
     return (
         <Modal
@@ -34,14 +52,14 @@ export const LicenseScreen = (prop: any) => {
                 <div>
                     <Grid margin={0} container spacing={0} alignItems="center" justifyContent="center">
                         {licenseKeys.map((value) => {
-                            const license = licenseFile[value].licenses
-                            const publisher = licenseFile[value].publisher
-                            const licenseText = licenseFile[value].licenseText
-                            const copyright = licenseFile[value].copyright
+                            // const license = licenseFile[value].licenses
+                            // const publisher = licenseFile[value].publisher
+                            // const licenseText = licenseFile[value].licenseText
+                            // const copyright = licenseFile[value].copyright
                             return (
                                 <div>
                                     <Grid container spacing={0} alignItems="center" justifyContent="center">
-                                        <Grid item xs={4}>
+                                        {/* <Grid item xs={4}>
                                             <Typography>{value} published by {publisher}</Typography>
                                         </Grid>
                                         <Grid item xs={4}>
@@ -49,7 +67,7 @@ export const LicenseScreen = (prop: any) => {
                                         </Grid>
                                         <Grid item xs={4}>
                                             <Typography>{copyright}</Typography>
-                                        </Grid>
+                                        </Grid> */}
                                     </Grid>
                                     <Divider />
                                 </div>

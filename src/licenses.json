@@ -530,7 +530,7 @@
     "licenses": "UNLICENSED",
     "private": true,
     "path": "C:\\Users\\Show\\Documents\\20_Software\\React_HandRangeTool\\handrange-tool",
-    "licenseFile": "C:\\Users\\Show\\Documents\\20_Software\\React_HandRangeTool\\handrange-tool\\README.md"
+    "licenseFile": "C:\\Users\\Show\\Documents\\20_Software\\React_HandRangeTool\\handrange-tool\\license.csv"
   },
   "has-flag@3.0.0": {
     "licenses": "MIT",
