@@ -5,7 +5,7 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from 'react';
 import { Actions, YokosawaHandRangeTier } from '@/const/const_poker';
-import { Box, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 // import { createStyles, makeStyles } from "@mui/styles";
 
@@ -125,79 +125,99 @@ export default function ActionSelector(prop: PropActionSelector) {
     // const red = '#FF0000';
     // const label = { inputProps: { 'aria-label': 'BB' } };
 
-    useEffect(()=>{
+    useEffect(() => {
         callback(tier, action);
-    },[]);
+    }, []);
     return (
         <div>
             <Grid container spacing={1}>
                 <Grid item xs={6}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Open</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={tier}
-                            label="Open"
-                            className={selectStyle}
-                            onChange={handleChange}
-                        >
-                            {keys.map((c: string) => {
-                                switch (c) {
-                                    case 'TIER_1':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#191970' }}>{c}</MenuItem>
-                                    case 'TIER_2':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#FF0000' }}>{c}</MenuItem>
-                                    case 'TIER_3':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#FFD700', color: '#000000' }}>{c}</MenuItem>
-                                    case 'TIER_4':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#228B22' }}>{c}</MenuItem>
-                                    case 'TIER_5':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#1E90FF' }}>{c}</MenuItem>
-                                    case 'TIER_6':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#FFFFFF', color: '#000000' }}>{c}</MenuItem>
-                                    case 'TIER_7':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#D8BFD8', color: '#000000' }}>{c}</MenuItem>
-                                    case 'TIER_8':
-                                        return <MenuItem key={c} value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
-                                    default:
-                                        return <MenuItem key={c} value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
-                                }
-                            })}
-                        </Select>
-                    </FormControl>
-
-                </Grid>
-                <Grid item xs={6}>
-                    <Grid container spacing={1} alignItems="center" justifyContent="center">
-                        <Grid item xs={6}>
-                            <Box >
-                                <FormControlLabel
-                                    label="BB"
-                                    control={
-                                        <Checkbox checked={isBB} onChange={onBBCheckBoxChanged} />
-                                    }
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid item xs={6}>
+                    <Typography>Opener</Typography>
+                    <Box sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 1 }}>
+                        <Box margin={2}>
                             <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Action</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Open</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={action}
+                                    variant="standard"
+                                    value={tier}
                                     label="Open"
-                                    className={selectActionStyle}
-                                    onChange={handleActionChange}
+                                    className={selectStyle}
+                                    onChange={handleChange}
                                 >
-                                    {actions.map((c: string) => {
-                                        return <MenuItem key={c} value={c} >{c}</MenuItem>
+                                    {keys.map((c: string) => {
+                                        switch (c) {
+                                            case 'TIER_1':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#191970' }}>{c}</MenuItem>
+                                            case 'TIER_2':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#FF0000' }}>{c}</MenuItem>
+                                            case 'TIER_3':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#FFD700', color: '#000000' }}>{c}</MenuItem>
+                                            case 'TIER_4':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#228B22' }}>{c}</MenuItem>
+                                            case 'TIER_5':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#1E90FF' }}>{c}</MenuItem>
+                                            case 'TIER_6':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#FFFFFF', color: '#000000' }}>{c}</MenuItem>
+                                            case 'TIER_7':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#D8BFD8', color: '#000000' }}>{c}</MenuItem>
+                                            case 'TIER_8':
+                                                return <MenuItem key={c} value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
+                                            default:
+                                                return <MenuItem key={c} value={c} sx={{ background: '#696969', color: '#000000' }}>{c}</MenuItem>
+                                        }
                                     })}
                                 </Select>
                             </FormControl>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography>Caller</Typography>
+                    <Box sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 1 }}>
+                        <Box margin={2}>
+                            <Grid container spacing={1} alignItems="center" justifyContent="center">
+                                <Grid item xs={6}>
+                                    <Box sx={{ justifyContent: 'center' }}>
+                                        <Grid container spacing={0} alignItems="center" justifyContent="center">
+                                            <Grid item>
+                                                <Checkbox checked={isBB} onChange={onBBCheckBoxChanged} />
+                                            </Grid>
+                                            <Grid item>
+                                                <Typography>BB</Typography>
+                                            </Grid>
+                                        </Grid>
+                                        {/* <FormControlLabel
+                                    label="BB"
+                                    control={
+                        <Checkbox checked={isBB} onChange={onBBCheckBoxChanged} />
+                    }
+                                    style={{ minWidth: 125 }}
+                                /> */}
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Action</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={action}
+                                            label="Open"
+                                            variant="standard"
+                                            className={selectActionStyle}
+                                            onChange={handleActionChange}
+                                        >
+                                            {actions.map((c: string) => {
+                                                return <MenuItem key={c} value={c} >{c}</MenuItem>
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Box>
                 </Grid>
             </Grid>
         </div>

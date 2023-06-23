@@ -25,17 +25,16 @@ export default function PlayCardUI(prop: PlayCardUIProps) {
     if (c === undefined) {
         return (
             <Button onClick={onCardClicked}>
-                <Card style={{ backgroundColor: "#BBBBBB" }}>
+                <Card style={{ backgroundColor: "#DCDCDC" }}>
                     <Grid container spacing={0.5} alignItems="center" justifyContent="center">
-                        <Grid item xs={1} />
-                        <Grid item xs={4}>
-                            <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'? '}</Typography>
+                        <Grid container spacing={0} alignItems="center" justifyContent="center">
+                            <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={1} />
-                        <Grid item xs={4}>
-                            <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
-                        </Grid>
-                        <Grid item xs={1} />
                     </Grid>
                 </Card>
             </Button>
@@ -44,7 +43,7 @@ export default function PlayCardUI(prop: PlayCardUIProps) {
         if (enabled) {
             return (
                 <Button onClick={onCardClicked}>
-                    <Card style={{ backgroundColor: "#BBBBBB" }}>
+                    <Card style={{ backgroundColor: "#DCDCDC" }}>
                         <Grid container spacing={2} alignItems="center" justifyContent="center">
                             <Grid item xs={5}>
                                 <SuitUI suit={c.suit} />

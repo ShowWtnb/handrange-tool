@@ -1,12 +1,23 @@
 import HandTable from '@/component/HandTable'
 import ActionSelector from '@/component/ActionSelector'
 import { Button, Grid, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Actions, YokosawaHandRangeTier } from '@/const/const_poker'
+import { useWindowSize } from './utils/useWindowSize'
 
 export default function HandRangeToolHome() {
     const [tierRange1, setTierRange1] = useState([YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_1]);
     const [tierRange2, setTierRange2] = useState([YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_2]);
+    const [widthHandTable, setWidthHandTable] = useState(6);
+    const [width, height] = useWindowSize();
+    useEffect(()=>{
+        if(width > 1400){
+            setWidthHandTable(6);
+        }else{
+            setWidthHandTable(12);
+        }
+    },[width])
+
     const handleActionChange = (event: any) => {
         // console.log('Home handleActionChange', event);
         if (event.tier != undefined) {
@@ -75,11 +86,11 @@ export default function HandRangeToolHome() {
                         <Grid item xs={12}>
                             <ActionSelector eventHandler={handleActionChange} />
                         </Grid>
-                        <Grid item xs={6}>
-                            <HandTable tierRange={tierRange1} />
+                        <Grid item xs={widthHandTable}>
+                            <HandTable tierRange={tierRange1} title={'Opener'}/>
                         </Grid>
-                        <Grid item xs={6}>
-                            <HandTable tierRange={tierRange2} />
+                        <Grid item xs={widthHandTable}>
+                            <HandTable tierRange={tierRange2} title={'Caller'}/>
                         </Grid>
                     </Grid>
                 </Grid>

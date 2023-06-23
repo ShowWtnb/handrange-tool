@@ -45,9 +45,8 @@ export default function HandProbability(prop: HandProbabilityProps) {
                 setIsCalculating(false);
             })
             .catch((error) => {
-                console.error(`Error: ${error.message}`);
+                // console.log(`Error: ${error}`);
             });
-
     }, [deck, cardBoard, cardP1]);
 
     // スレッド処理
@@ -57,6 +56,7 @@ export default function HandProbability(prop: HandProbabilityProps) {
             setTimeout(() => {
                 setIsProbability(false);
                 if (!cardBoard || !deck) {
+                    reject('cardBoard or deck is undefined');
                     return;
                 }
 
@@ -139,7 +139,7 @@ export default function HandProbability(prop: HandProbabilityProps) {
                     setIsProbability(true);
                     resolve([...counter]);
                 }
-                reject('EOF')
+                reject('EOF');
             }, timeout);
         });
     }

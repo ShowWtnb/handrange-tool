@@ -381,7 +381,7 @@ export function JudgeOdds(
     var sum = p1Win + p2Win + draw;
     var win1 = p1Win / (sum) * 100.0;
     var win2 = p2Win / (sum) * 100.0;
-    console.log('JudgeOdds', p1Win, p2Win, draw)
+    // console.log('JudgeOdds', p1Win, p2Win, draw)
     res = [win1, win2];
     return res;
 }

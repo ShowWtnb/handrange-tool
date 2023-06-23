@@ -6,20 +6,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { PorkerHands, YokosawaHandRangeTier } from "@/const/const_poker";
+import { Typography } from "@mui/material";
 
 const fontsize: number = 10.5;
 
 class PropHandTable {
     tierRange: YokosawaHandRangeTier[] = [YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_1];
+    title?: string;
 }
 
 export default function HandTable(prop: PropHandTable) {
     const [tierRange, setTierRange] = useState(prop.tierRange);
 
-    useEffect(()=>{
+    useEffect(() => {
         // console.log('HandTable useEffect prop.tierRange')
         setTierRange(prop.tierRange);
-    },[prop.tierRange])
+    }, [prop.tierRange])
     function GetCell(tier: YokosawaHandRangeTier, str: string) {
         // console.log(styles);
         // console.log(tier, str);
@@ -102,7 +104,7 @@ export default function HandTable(prop: PropHandTable) {
 
     return (
         <div>
-            {/* <h1>TEST HandTable</h1> */}
+            {prop.title ? (<Typography >{prop.title}</Typography>) : <div />}
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 100 }} aria-label="simple table">
                     {/* <TableHead>

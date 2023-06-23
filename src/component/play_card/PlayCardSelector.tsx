@@ -1,5 +1,5 @@
 import { PlayCard, PlayCardDeck, Suit } from "@/const/const_playCard";
-import { Card, Typography, Grid, Button } from "@mui/material";
+import { Card, Typography, Grid, Button, Box } from "@mui/material";
 import SuitUI from "./SuitUI";
 import NumberUI from "./NumberUI";
 import CardSelectModal from "./CardSelectModal";
@@ -32,12 +32,12 @@ export default function card(prop: PlayCardProps) {
         setOpenModal(false);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setCard(prop.card);
-    },[prop.card])
-    useEffect(()=>{
+    }, [prop.card])
+    useEffect(() => {
         setDeck(prop.deck);
-    },[prop.deck])
+    }, [prop.deck])
 
     if (card === undefined) {
         // console.log('PlayCardSelector', card);
@@ -46,17 +46,14 @@ export default function card(prop: PlayCardProps) {
                 <Grid container spacing={0} alignItems="center" justifyContent="center">
                     <Grid item xs={12}>
                         <Button onClick={onCardClicked}>
-                            <Card style={{ backgroundColor: "#696969" }}>
-                                <Grid container spacing={0.5} alignItems="center" justifyContent="center">
-                                    <Grid item xs={1} />
-                                    <Grid item xs={4}>
-                                        <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'? '}</Typography>
-                                    </Grid>
-                                    <Grid item xs={1} />
-                                    <Grid item xs={4}>
+                            <Card style={{ backgroundColor: "#808080" }}>
+                                <Grid container spacing={0} alignItems="center" justifyContent="center">
+                                    <Grid item xs={6}>
                                         <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
                                     </Grid>
-                                    <Grid item xs={1} />
+                                    <Grid item xs={6}>
+                                        <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
+                                    </Grid>
                                 </Grid>
                             </Card>
                         </Button>
@@ -72,12 +69,12 @@ export default function card(prop: PlayCardProps) {
                 <Grid container spacing={0} alignItems="center" justifyContent="center">
                     <Grid item xs={12}>
                         <Button onClick={onCardClicked}>
-                            <Card style={{ backgroundColor: "#696969" }}>
-                                <Grid container spacing={2} alignItems="center" justifyContent="center">
-                                    <Grid item xs={5}>
+                            <Card style={{ backgroundColor: "#DCDCDC" }}>
+                                <Grid container spacing={1} alignItems="center" justifyContent="center">
+                                    <Grid item xs={6}>
                                         <SuitUI suit={card.suit} />
                                     </Grid>
-                                    <Grid item xs={5}>
+                                    <Grid item xs={6}>
                                         <NumberUI card={card} />
                                     </Grid>
                                 </Grid>

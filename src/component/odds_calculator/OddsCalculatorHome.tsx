@@ -20,27 +20,36 @@ export default function OddsCalculatorHome() {
 
     const onPotValueChanged = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPot(event.target.value);
-        calc();
+        calc(parseFloat(event.target.value), undefined, undefined);
     }
     const onBetValueChanged = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setBet(event.target.value);
-        calc();
+        calc(undefined, parseFloat(event.target.value), undefined);
     }
     const onSelectorChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
         setSelectorVal(event.target.value);
-        calc();
+        calc(undefined, undefined, parseInt(event.target.value));
     }
 
-    const calc = () => {
-        var potTotal = parseFloat(pot);
+    const calc = (a_pot?: number, a_bet?: number, a_selectorVal?: number) => {
+        if (a_pot === undefined) {
+            a_pot = parseFloat(pot);
+        }
+        if (a_bet === undefined) {
+            a_bet = parseFloat(bet);
+        }
+        if (a_selectorVal === undefined) {
+            a_selectorVal = parseInt(selectorVal);
+        }
+        var potTotal = a_pot;
         var betSize = 0;
         // console.log('OddsCalculatorHome default', typeof (selectorVal), selectorVal)
-        switch (parseInt(selectorVal)) {
+        switch (a_selectorVal) {
             case 0:
-                betSize = potTotal * parseFloat(bet) * 0.01;
+                betSize = potTotal * a_bet * 0.01;
                 break;
             case 1:
-                betSize = parseFloat(bet);
+                betSize = a_bet;
                 break;
             default:
                 break;
@@ -49,9 +58,9 @@ export default function OddsCalculatorHome() {
         potTotal += 2.0 * betSize;
         setTotalPot(potTotal.toString());
         var o = potTotal / betSize;
-        setOdds(o.toString());
+        setOdds(o.toFixed(2).toString());
         var eq = 100.0 / o;
-        setEquity(eq.toString());
+        setEquity(eq.toFixed(2).toString());
         // console.log('OddsCalculatorHome', pot, potTotal, bet, need2call, odds, equity)
     }
     //#endregion
@@ -216,7 +225,7 @@ export default function OddsCalculatorHome() {
     useEffect(() => {
         // console.log('OddsCalculatorHome onCombinationChanged');
         var res = JudgeOdds(combinations1, combinations2);
-        console.log('OddsCalculatorHome onCombinationChanged', res);
+        // console.log('OddsCalculatorHome onCombinationChanged', res);
         setWinOdds([...res]);
     }, [combinations1, combinations2]);
 
@@ -232,6 +241,7 @@ export default function OddsCalculatorHome() {
                                         id="filled-number"
                                         label="Pot(BB)"
                                         type="number"
+                                        variant="standard"
                                         value={pot}
                                         InputProps={{
                                             sx: {
@@ -247,6 +257,7 @@ export default function OddsCalculatorHome() {
                                     <TextField
                                         id="filled-number"
                                         label="Bet"
+                                        variant="standard"
                                         type="number"
                                         value={bet}
                                         InputProps={{
@@ -264,6 +275,7 @@ export default function OddsCalculatorHome() {
                                         <InputLabel id="demo-simple-select-label">unit</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
+                                            variant="standard"
                                             id="demo-simple-select"
                                             value={selectorVal}
                                             label="unit"
@@ -322,12 +334,14 @@ export default function OddsCalculatorHome() {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={1.5}>
+                                <Grid item xs={2}>
                                     <TextField
                                         id="filled-read-only-input"
                                         label="Equity(%)"
                                         type="number"
                                         value={equity}
+                                        color="primary"
+                                        focused
                                         InputProps={{
                                             readOnly: true,
                                             sx: {
@@ -338,7 +352,7 @@ export default function OddsCalculatorHome() {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={1}>
+                                <Grid item xs={0.5}>
                                     <IconButton aria-label="reload" onClick={() => { console.log('OddsCalculatorHome IconButton', deck); calc(); }}>
                                         <Cached />
                                     </IconButton>
@@ -353,13 +367,13 @@ export default function OddsCalculatorHome() {
                                 <Grid item xs={6}>
                                     <Box sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 1 }}>
                                         <HandSelector title="Player1" deck={deck} onSelected={onP1Selected} cards={cardP1} />
-                                        <HandProbability deck={deck} hand={cardP1} board={cardBoard} onCombinationChanged={onP1CombinationChanged} winOdds={winOdds[0]}/>
+                                        <HandProbability deck={deck} hand={cardP1} board={cardBoard} onCombinationChanged={onP1CombinationChanged} winOdds={winOdds[0]} />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Box sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 1 }}>
                                         <HandSelector title="Player2" deck={deck} onSelected={onP2Selected} cards={cardP2} />
-                                        <HandProbability deck={deck} hand={cardP2} board={cardBoard} onCombinationChanged={onP2CombinationChanged} winOdds={winOdds[1]}/>
+                                        <HandProbability deck={deck} hand={cardP2} board={cardBoard} onCombinationChanged={onP2CombinationChanged} winOdds={winOdds[1]} />
                                     </Box>
                                 </Grid>
                             </Grid>

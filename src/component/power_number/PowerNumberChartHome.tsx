@@ -57,29 +57,40 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
     }, [])
     const onStackValueChanged = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setStack(event.target.value);
-        calc();
+        calc(undefined, parseFloat(event.target.value), undefined);
+        // calc();
     }
     const onAnteValueChanged = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setAnte(event.target.value);
-        calc();
+        calc(parseFloat(event.target.value), undefined, undefined);
+        // calc();
     }
     const onPlayerCountValueChanged = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setPlayerCount(event.target.value);
-        calc();
+        calc(undefined, undefined, parseFloat(event.target.value));
     }
 
-    const calc = () => {
-        var bbCnt = 1.0 + 0.5 + parseFloat(ante);
-        var m = parseFloat(stack) / bbCnt;
+    const calc = (a_ante?: number, a_stack?: number, a_playerCount?: number) => {
+        if (a_ante === undefined) {
+            a_ante = parseFloat(ante);
+        }
+        if (a_stack === undefined) {
+            a_stack = parseFloat(stack);
+        }
+        if (a_playerCount === undefined) {
+            a_playerCount = parseFloat(playerCount);
+        }
+        var bbCnt = 1.0 + 0.5 + a_ante;
+        var m = a_stack / bbCnt;
         setMVal(m.toString());
-        var pow = m * parseFloat(playerCount);
+        var pow = m * a_playerCount;
         setPowNum(pow.toString());
     }
     const GetIcon = () => {
         if (selected) {
-            return (<AttachMoney />);
+            return (<AttachMoney color="primary" fontSize="medium" />);
         } else {
-            return (<MoneyOff />);
+            return (<MoneyOff color="disabled" />);
         }
     }
 
@@ -94,6 +105,7 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                     <TextField
                                         id="filled-number"
                                         label="Your stack(BB)"
+                                        variant="standard"
                                         type="number"
                                         value={stack}
                                         InputProps={{
@@ -110,6 +122,7 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                     <TextField
                                         id="filled-number"
                                         label="Ante(BB)"
+                                        variant="standard"
                                         type="number"
                                         value={ante}
                                         InputProps={{
@@ -142,6 +155,7 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                     <TextField
                                         id="filled-number"
                                         label="Player behind count"
+                                        variant="standard"
                                         type="number"
                                         value={playerCount}
                                         InputProps={{
@@ -159,6 +173,8 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                         id="filled-read-only-input"
                                         label="Power Number"
                                         type="number"
+                                        color="primary"
+                                        focused
                                         value={powNum}
                                         InputProps={{
                                             readOnly: true,
