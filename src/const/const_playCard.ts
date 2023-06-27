@@ -6,6 +6,7 @@ export enum Suit {
     SUIT_CLOVERS,
     SUIT_HEARTS,
 }
+export const SuitKeys = Object.keys(Suit).filter((v) => isNaN(Number(v)));
 export enum Num {
     NUM_2 = 0,
     NUM_3,
@@ -21,6 +22,40 @@ export enum Num {
     NUM_KING,
     NUM_ACE,
 }
+export const NumKeys = Object.keys(Num).filter((v) => isNaN(Number(v)));
+export function GetNUMfromString(str: string): Num | undefined {
+    switch (str) {
+        case 'A':
+            return Num.NUM_ACE;
+        case 'K':
+            return Num.NUM_KING;
+        case 'Q':
+            return Num.NUM_QUEEN;
+        case 'J':
+            return Num.NUM_JACK;
+        case 'T':
+            return Num.NUM_10;
+        case '9':
+            return Num.NUM_9;
+        case '8':
+            return Num.NUM_8;
+        case '7':
+            return Num.NUM_7;
+        case '6':
+            return Num.NUM_6;
+        case '5':
+            return Num.NUM_5;
+        case '4':
+            return Num.NUM_4;
+        case '3':
+            return Num.NUM_3;
+        case '2':
+            return Num.NUM_2;
+        default:
+            break;
+    }
+    return undefined;
+}
 
 export class PlayCard {
     suit?: Suit;
@@ -32,12 +67,15 @@ export class PlayCard {
         this.enable = e ?? true;
     }
 }
+export function PlayCardCompare(array: PlayCard[], val: PlayCard) {
+    return array.some((arrVal) => (arrVal.num === val.num && arrVal.suit === val.suit));
+}
 export class PlayCardDeck {
     deck: Array<PlayCard>;
     // deckEnable: Array<boolean>;
     constructor() {
-        const keysNum = Object.keys(Num).filter((v) => isNaN(Number(v)));
-        const keysSuit = Object.keys(Suit).filter((v) => isNaN(Number(v)));
+        const keysNum = NumKeys;
+        const keysSuit = SuitKeys;
 
         this.deck = new Array<PlayCard>();
         // this.deckEnable = new Array<boolean>();
@@ -101,6 +139,17 @@ export class PlayCardDeck {
                 this.deck[i].enable = true;
             }
         }
+    }
+    // 有効なカードの一覧を取得する
+    get_enables(): PlayCard[] {
+        var res: PlayCard[] = [];
+        for (let i = 0; i < this.deck.length; i++) {
+            const element = this.deck[i];
+            if (element.enable) {
+                res.push(element);
+            }
+        }
+        return res;
     }
 
 }

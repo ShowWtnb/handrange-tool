@@ -116,6 +116,7 @@ export default function Home() {
       <LicenseScreen readme={true} open={ReadMeScreenOpened} handleClose={onReadMeClose} />
       <LicenseScreen open={LicenseScreenOpened} handleClose={onLicenseClose} />
       <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <Typography align='center' variant="body2" color="text.secondary">Copyright (c) 2023 ShowWtnb</Typography>
         <Typography align='center' variant="body2" color="text.secondary">This Software is in no way affiliated with 世界のヨコサワ or 株式会社POKER ROOM.</Typography>
       </Paper>
     </div>

@@ -1,5 +1,5 @@
 import { PlayCard, PlayCardDeck } from "@/const/const_playCard";
-import { JudgeHand, PokerHandRanking } from "@/const/const_poker";
+import { JudgeHand, PokerHandRanking, PokerHandRankingKeys } from "@/const/const_poker";
 import { Box, CircularProgress, Grid, LinearProgress, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { nCr, combinations } from "../utils";
@@ -8,20 +8,30 @@ interface HandProbabilityProps {
     deck?: PlayCardDeck;
     hand?: PlayCard[];
     board?: PlayCard[];
-    onCombinationChanged?: (combinations: any) => {};
+    // onCombinationChanged?: (combinations: any) => {};
     winOdds?: number;
+    isRangeEnable?: boolean;
+    handCombination?: PlayCard[][];
 }
 
 export default function HandProbability(prop: HandProbabilityProps) {
     const [deck, setDeck] = useState<PlayCardDeck>();
     const [cardBoard, setCardBoard] = useState<PlayCard[]>();
-    const [cardP1, setCardP1] = useState<PlayCard[]>();
+    const [cardHand, setCardHand] = useState<PlayCard[]>();
     const [probability, setProbability] = useState<number[]>([]);
     const [PokerHandRankings, setPokerHandRankings] = useState<string[]>([]);
     const [isProbability, setIsProbability] = useState<boolean>(false);
     const [isCalculating, setIsCalculating] = useState<boolean>(false);
     const [winOdds, setWinOdds] = useState(prop.winOdds);
+    const [isRangeEnable, setIsRangeEnable] = useState(prop.isRangeEnable);
+    const [handCombination, setHandCombination] = useState(prop.handCombination);
 
+    useEffect(() => {
+        setIsRangeEnable(prop.isRangeEnable);
+    }, [prop.isRangeEnable]);
+    useEffect(() => {
+        setHandCombination(prop.handCombination);
+    }, [prop.handCombination]);
     useEffect(() => {
         setWinOdds(prop.winOdds);
     }, [prop.winOdds]);
@@ -32,22 +42,145 @@ export default function HandProbability(prop: HandProbabilityProps) {
         setCardBoard(prop.board);
     }, [prop.board]);
     useEffect(() => {
-        setCardP1(prop.hand);
+        setCardHand(prop.hand);
     }, [prop.hand]);
     useEffect(() => {
-        setPokerHandRankings(Object.keys(PokerHandRanking).filter((v) => isNaN(Number(v))));
+        setPokerHandRankings(PokerHandRankingKeys);
     }, []);
     useEffect(() => {
         setIsCalculating(true);
-        // Promiseを利用する処理
-        AsyncGetProbabilityHand(1000)
-            .then((result) => {
-                setIsCalculating(false);
-            })
-            .catch((error) => {
-                // console.log(`Error: ${error}`);
-            });
-    }, [deck, cardBoard, cardP1]);
+        if (isRangeEnable) {
+            // // Promiseを利用する処理
+            // AsyncGetProbabilityHandFromRange(1000)
+            //     .then((result) => {
+            //         setIsCalculating(false);
+            //     })
+            //     .catch((error) => {
+            //         console.log(`AsyncGetProbabilityHandFromRange Error: ${error}`);
+            //     });
+        } else {
+            // Promiseを利用する処理
+            AsyncGetProbabilityHand(1000)
+                .then((result) => {
+                    setIsCalculating(false);
+                })
+                .catch((error) => {
+                    setIsCalculating(false);
+                    // console.log(`Error: ${error}`);
+                });
+        }
+    }, [deck, cardBoard, cardHand]);
+    useEffect(() => {
+        setIsCalculating(true);
+        if (isRangeEnable) {
+            // Promiseを利用する処理
+            AsyncGetProbabilityHandFromRange(1000)
+                .then((result) => {
+                    setIsCalculating(false);
+                })
+                .catch((error) => {
+                    console.log(`AsyncGetProbabilityHandFromRange Error: ${error}`);
+                    setIsCalculating(false);
+                });
+        }
+    }, [deck, cardBoard, cardHand, handCombination]);
+
+    function AsyncGetProbabilityHandFromRange(timeout: number = 1000) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // TODO Combinationを渡されてレンジで実現可能な役の確立を求める
+                setIsProbability(false);
+                if (cardBoard == undefined || deck == undefined || handCombination == undefined) {
+                    // console.log('HandProbability AsyncGetProbabilityHandFromRange', cardBoard, deck, handCombination);
+                    reject('cardBoard or deck is undefined');
+                    return;
+                }
+
+                // 未定のボードの枚数をカウントする
+                var undefCount = 0;
+                var board = [];
+                for (let i = 0; i < cardBoard.length; i++) {
+                    const element = cardBoard[i];
+                    if (element === undefined) {
+                        undefCount++;
+                    } else {
+                        board.push(element);
+                    }
+                }
+                // deckから有効牌のみを取り出す
+                var effective = [];
+                for (let i = 0; i < deck?.deck.length; i++) {
+                    const element = deck?.deck?.at(i);
+                    if (element && element.enable) {
+                        effective.push(element);
+                    }
+                }
+
+                var counter = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                const boardUndefCount = nCr(effective.length, undefCount);
+                var combCount = boardUndefCount * handCombination.length;
+                // console.log('HandProbability AsyncGetProbabilityHandFromRange', undefCount, effective.length, boardUndefCount, combCount, handCombination);
+                if (undefCount > 0) {
+                    // handCombination
+                    const combination = combinations(effective, undefCount);
+                    for (let i = 0; i < combination.length; i++) {
+                        const element = combination[i];
+                        var bTmp = [...board, ...element];
+                        for (let j = 0; j < handCombination.length; j++) {
+                            const handComb = handCombination[j];
+                            // elementもhandCombそれぞれenablesから抽出しているので重複する可能性がある
+                            var isDuplicate = false;
+                            for (let k = 0; k < handComb.length; k++) {
+                                const c1 = handComb[k];
+                                for (let l = 0; l < bTmp.length; l++) {
+                                    const c2 = bTmp[l];
+                                    if (c1.num === c2.num && c1.suit === c2.suit) {
+                                        isDuplicate = true;
+                                    }
+                                }
+                            }
+                            if (isDuplicate) {
+                                // console.log('HandProbability AsyncGetProbabilityHandFromRange isDuplicate', isDuplicate);
+                                combCount--;
+                                continue;
+                            }
+                            var judge = JudgeHand(handComb, bTmp);
+                            if (judge?.flag) {
+                                var yaku: any = judge?.key;
+                                const str: keyof typeof PokerHandRanking = yaku;
+                                var rank = PokerHandRanking[str];
+                                counter[rank] += 1;
+                            }
+                        }
+                    }
+                } else {
+                    for (let j = 0; j < handCombination.length; j++) {
+                        const handComb = handCombination[j];
+                        var judge = JudgeHand(handComb, board);
+                        if (judge?.flag) {
+                            var yaku: any = judge?.key;
+                            const str: keyof typeof PokerHandRanking = yaku;
+                            var rank = PokerHandRanking[str];
+                            counter[rank] += 1;
+                        }
+                    }
+                }
+
+                for (let i = 0; i < counter.length; i++) {
+                    // const element = counter[i];
+                    counter[i] = counter[i] * 100 / combCount;
+                }
+                // console.log('HandProbability AsyncGetProbabilityHandFromRange', combCount, counter);
+
+                setProbability([...counter]);
+                setIsProbability(true);
+                resolve(counter);
+
+                reject('EOF');
+            }, timeout);
+        });
+
+    }
 
     // スレッド処理
     // https://zenn.dev/airiswim/articles/14d8a9e87503b6    
@@ -60,6 +193,7 @@ export default function HandProbability(prop: HandProbabilityProps) {
                     return;
                 }
 
+                // 未定のボードの枚数をカウントする
                 var undefCount = 0;
                 for (let i = 0; i < cardBoard.length; i++) {
                     const boardC = cardBoard[i];
@@ -69,9 +203,9 @@ export default function HandProbability(prop: HandProbabilityProps) {
                 }
 
                 // hand側のundefCountもカウントする
-                if (cardP1) {
-                    for (let i = 0; i < cardP1.length; i++) {
-                        const boardC = cardP1[i];
+                if (cardHand) {
+                    for (let i = 0; i < cardHand.length; i++) {
+                        const boardC = cardHand[i];
                         if (boardC === undefined) {
                             undefCount++;   // ボードが未定でもハンドが未定でも結果は同じなのでボードの未定を増やせばよい
                         }
@@ -107,9 +241,9 @@ export default function HandProbability(prop: HandProbabilityProps) {
                     }
                     // handからundefを取り除く
                     var handNotUndef = [];
-                    if (cardP1) {
-                        for (let i = 0; i < cardP1.length; i++) {
-                            const element = cardP1[i];
+                    if (cardHand) {
+                        for (let i = 0; i < cardHand.length; i++) {
+                            const element = cardHand[i];
                             if (element) {
                                 handNotUndef.push(element);
                             }
@@ -127,9 +261,9 @@ export default function HandProbability(prop: HandProbabilityProps) {
                             counter[e] += 1;
                         }
                     }
-                    if (prop.onCombinationChanged) {
-                        prop.onCombinationChanged(comb);
-                    }
+                    // if (prop.onCombinationChanged) {
+                    //     prop.onCombinationChanged(comb);
+                    // }
                     for (let i = 0; i < counter.length; i++) {
                         // const element = counter[i];
                         counter[i] = counter[i] * 100 / cc;
@@ -145,7 +279,7 @@ export default function HandProbability(prop: HandProbabilityProps) {
     }
 
     const GetCurrentHand = () => {
-        var res = JudgeHand(cardP1, cardBoard);
+        var res = JudgeHand(cardHand, cardBoard);
         var str = 'something';
         if (res) {
             if (res.flag) {
@@ -204,7 +338,7 @@ export default function HandProbability(prop: HandProbabilityProps) {
         return (
             <Grid container spacing={0} alignItems="center" justifyContent="center">
                 <Grid item xs={6} >
-                    <Typography margin={1} align="left">{'Possibility'}</Typography>
+                    <Typography margin={1} align="left">{'Winning %'}</Typography>
                 </Grid>
                 <Grid item xs={4} >
                     <div style={{ flexGrow: 1 }}></div>

@@ -1,6 +1,7 @@
 // import { createStyles, makeStyles } from "@mui/styles";
 
-import { Suit } from "./const_playCard";
+import { nPr, permutation } from "@/component/utils/utils";
+import { GetNUMfromString, PlayCardCompare, PlayCardDeck, Suit, SuitKeys } from "./const_playCard";
 import { Num, PlayCard } from "./const_playCard";
 
 class PorkerHand {
@@ -24,10 +25,12 @@ export enum YokosawaHandRangeTier {
     TIER_7,
     TIER_8,
 }
+export const YokosawaHandRangeTierKeys = Object.keys(YokosawaHandRangeTier).filter((v) => isNaN(Number(v)));
 export enum Actions {
     CALL = 0,
     RERAISE,
 }
+export const ActionsKeys = Object.keys(Actions).filter((v) => isNaN(Number(v)));
 export enum PokerHandRanking {
     ROYAL_FLUSH = 0,
     STRAIGHT_FLUSH,
@@ -40,14 +43,43 @@ export enum PokerHandRanking {
     ONE_PAIR,
     HIGH_CARD,
 }
-export function JudgeHand(hand?: PlayCard[], board?: PlayCard[]): {
-    key: string;
-    flag?: boolean | undefined;
-    cards?: PlayCard[] | undefined;
-} | undefined {
-    const keys = Object.keys(PokerHandRanking).filter((v) => isNaN(Number(v)));
+export const PokerHandRankingKeys = Object.keys(PokerHandRanking).filter((v) => isNaN(Number(v)));
+
+export function GetTierStyle(tier: YokosawaHandRangeTier) {
+    switch (tier) {
+        case YokosawaHandRangeTier.TIER_1:
+            return { background: '#191970', foreground: '#FFFFFF' };
+        case YokosawaHandRangeTier.TIER_2:
+            return { background: '#FF0000', foreground: '#000000' };
+        case YokosawaHandRangeTier.TIER_3:
+            return { background: '#FFD700', foreground: '#000000' };
+        case YokosawaHandRangeTier.TIER_4:
+            return { background: '#228B22', foreground: '#FFFFFF' };
+        case YokosawaHandRangeTier.TIER_5:
+            return { background: '#1E90FF', foreground: '#FFFFFF' };
+        case YokosawaHandRangeTier.TIER_6:
+            return { background: '#FFFFFF', foreground: '#000000' };
+        case YokosawaHandRangeTier.TIER_7:
+            return { background: '#D8BFD8', foreground: '#000000' };
+        case YokosawaHandRangeTier.TIER_8:
+            return { background: '#696969', foreground: '#000000' };
+        default:
+            return { background: '#696969', foreground: '#000000' };
+    }
+}
+
+export class JudgedHand {
+    key: string = '';
+    flag?: boolean;
+    cards?: PlayCard[];
+    isBoard?: boolean[];
+    isHand?: boolean[];
+}
+
+export function JudgeHand(hand?: PlayCard[], board?: PlayCard[]): JudgedHand | undefined {
+    const keys = PokerHandRankingKeys;
     var res;
-    if (hand && board) {
+    if (hand != undefined && board != undefined) {
         // ハンドとボードを合わせて数字順に並べる
         // console.log('JudgeHand', hand, board);
         var cards = [...hand, ...board];
@@ -110,8 +142,10 @@ export function JudgeHand(hand?: PlayCard[], board?: PlayCard[]): {
                             var remove = cards.filter(function (v) {
                                 return !tmp.includes(v);
                             });
+                            // console.log('PokerHandRanking.FULL_HOUSE remove', remove);
                             res = JudgeNofKind(remove, 2);
-                            if (res.flag && res.cards) {
+                            // console.log('PokerHandRanking.FULL_HOUSE res', res);
+                            if (res.flag && res.cards != undefined) {
                                 // console.log('JudgeHand FULL_HOUSE', res);
                                 res = { flag: res.flag, cards: [...tmp, ...res.cards] }
                                 isYaku = true;
@@ -160,7 +194,7 @@ export function JudgeHand(hand?: PlayCard[], board?: PlayCard[]): {
                                 return !tmp.includes(v);
                             });
                             res = JudgeNofKind(remove, 2);
-                            if (res.flag && res.cards) {
+                            if (res.flag && res.cards != undefined) {
                                 // console.log('JudgeHand TWO_PAIR', res);
                                 var tmp2 = res.cards;
                                 var remove2 = remove.filter(function (v) {
@@ -198,6 +232,9 @@ export function JudgeHand(hand?: PlayCard[], board?: PlayCard[]): {
             if (isYaku) {
                 res = { ...res, key }
                 // console.log('JudgeHand', res);
+                var isBoard = GetIsCommunityCards(res.cards, board);
+                var isHand = GetIsCommunityCards(res.cards, hand);
+                res = { ...res, isBoard, isHand };
                 return res;
             }
         };
@@ -273,7 +310,7 @@ function JudgeStraight(cards: PlayCard[]): { flag: boolean, cards?: PlayCard[] }
             if (!element) {
                 continue;
             }
-            if (current.num && element.num) {
+            if (current.num != undefined && element.num != undefined) {
                 // console.log('JudgeHand JudgeStraight', count, current, element);
                 if ((parseInt(current.num?.toString()) - 1) === parseInt(element.num?.toString())) {
                     current = element;
@@ -292,17 +329,18 @@ function JudgeStraight(cards: PlayCard[]): { flag: boolean, cards?: PlayCard[] }
 }
 
 function JudgeNofKind(cards: PlayCard[], n: number): { flag: boolean, cards?: PlayCard[] } {
-    for (let i = 0; i < cards.length - (n - 1); i++) {
+    // console.log('JudgeHand JudgeNofKind', cards, n, (cards.length - (n - 1)));
+    for (let i = 0; i < (cards.length - (n - 1)); i++) {
         var current = cards[i];
         var count = 0;
         var res = [current];
-        for (let j = i + 1; j < cards.length; j++) {
+        for (let j = (i + 1); j < cards.length; j++) {
             const element = cards[j];
+            // console.log('JudgeHand JudgeNofKind', count, current, element);
             if (!element) {
                 continue;
             }
-            if (current.num && element.num) {
-                // console.log('JudgeHand JudgeStraight', count, current, element);
+            if (current.num != undefined && element.num != undefined) {
                 if ((parseInt(current.num?.toString())) === parseInt(element.num?.toString())) {
                     current = element;
                     res.push(element);
@@ -311,50 +349,155 @@ function JudgeNofKind(cards: PlayCard[], n: number): { flag: boolean, cards?: Pl
             }
         }
         if (count >= (n - 1)) {
-            // console.log('JudgeHand JudgeStraight', { flag: true, cards: res });
+            // console.log('JudgeHand JudgeNofKind', { flag: true, cards: res });
             return { flag: true, cards: res };
         }
     }
-    // console.log('JudgeHand JudgeStraight', { flag: false }, cards);
+    // console.log('JudgeHand JudgeNofKind', { flag: false }, cards);
     return { flag: false }
 }
 
-export function JudgeOdds(
-    player1: {
-        key: string;
-        flag?: boolean | undefined;
-        cards?: PlayCard[] | undefined;
-    }[],
-    player2: {
-        key: string;
-        flag?: boolean | undefined;
-        cards?: PlayCard[] | undefined;
-    }[]
-): number[] {
-    var res = [-1, -1];
-    var p1Win = 0;
-    var p2Win = 0;
-    var draw = 0;
-    // console.log('JudgeOdds', player1, player2);
+// // deprecated
+// // FATAL TODO 共通のカードと個々のカードを分けないと正しい勝率が出ない（ボードのスリーカードがハンド込みの2ペアに対してスリーカードの勝ちになってしまっている（負け側がボードスリーカードの時は2ペア側はフルハウスになっているはず） T5 vs 34 in 7KTK?で34が勝率6%ぐらいある）
+// export function JudgeOdds(
+//     player1: JudgedHand[],
+//     player2: JudgedHand[],
+//     undefinedBoardCount?: number
+// ): number[] {
+//     var res = [-1, -1];
+//     var p1Win = 0;
+//     var p2Win = 0;
+//     var draw = 0;
+//     // console.log('JudgeOdds', player1, player2);
+//     if (undefinedBoardCount === undefined) {
+//         undefinedBoardCount = 0;
+//     }
 
-    for (let i = 0; i < player1.length; i++) {
-        const p1 = player1[i];
-        var e1 = (PokerHandRanking as any)[p1?.key] as PokerHandRanking;
-        for (let j = 0; j < player2.length; j++) {
-            const p2 = player2[j];
-            var e2 = (PokerHandRanking as any)[p2?.key] as PokerHandRanking;
-            if (e1 && e2) {
-                if (e1 < e2) {
-                    // PokerHandRankingは小さい方が強い
-                    // console.log('JudgeOdds p1Win');
-                    p1Win++;
-                } else if (e1 > e2) {
-                    // PokerHandRankingは小さい方が強い
-                    // console.log('JudgeOdds p2Win');
-                    p2Win++;
-                } else if (e1 === e2) {
-                    // 同じ場合は詳細な判定が必要
-                    switch (JudgeWin(p1, p2)) {
+//     for (let i = 0; i < player1.length; i++) {
+//         const p1 = player1[i];
+//         var e1 = (PokerHandRanking as any)[p1?.key] as PokerHandRanking;
+//         var cards1 = p1.cards;
+//         for (let j = 0; j < player2.length; j++) {
+//             const p2 = player2[j];
+//             var e2 = (PokerHandRanking as any)[p2?.key] as PokerHandRanking;
+//             var cards2 = p2.cards;
+//             var comCards = GetCommunityCards(cards1, cards2);
+//             // console.log('JudgeOdds', comCards.length, undefinedBoardCount, comCards);
+//             if (e1 && e2) {
+//                 if (e1 < e2) {
+//                     // PokerHandRankingは小さい方が強い
+//                     // console.log('JudgeOdds p1Win');
+//                     p1Win++;
+//                 } else if (e1 > e2) {
+//                     // PokerHandRankingは小さい方が強い
+//                     // console.log('JudgeOdds p2Win');
+//                     p2Win++;
+//                 } else if (e1 === e2) {
+//                     // 同じ場合は詳細な判定が必要
+//                     switch (JudgeWin(p1, p2)) {
+//                         case 1:
+//                             // console.log('JudgeOdds p1Win');
+//                             p1Win++;
+//                             break;
+//                         case 2:
+//                             // console.log('JudgeOdds p2Win');
+//                             p2Win++;
+//                             break;
+//                         case 0:
+//                             // console.log('JudgeOdds draw');
+//                             draw++;
+//                             break;
+//                         default:
+//                             console.log('JudgeWin ERROR');
+//                             break;
+//                     }
+//                 } else {
+//                     console.log('JudgeWin ERROR');
+//                 }
+//             }
+//         }
+//     }
+
+//     var sum = p1Win + p2Win + draw;
+//     var win1 = p1Win / (sum) * 100.0;
+//     var win2 = p2Win / (sum) * 100.0;
+//     // console.log('JudgeOdds', p1Win, p2Win, draw)
+//     res = [win1, win2];
+//     return res;
+// }
+export function JudgeOdds(
+    player1?: PlayCard[],
+    player2?: PlayCard[],
+    board?: PlayCard[],
+    deck?: PlayCard[],
+): number[] {
+    var res = [0, 0, 0];
+    if (player1 != undefined && player2 != undefined && board != undefined && deck != undefined) {
+        var undefCount = 0;
+        for (let i = 0; i < player1.length; i++) {
+            const boardC = player1[i];
+            if (boardC === undefined) {
+                undefCount++;
+            }
+        }
+        for (let i = 0; i < player2.length; i++) {
+            const boardC = player2[i];
+            if (boardC === undefined) {
+                undefCount++;
+            }
+        }
+        for (let i = 0; i < board.length; i++) {
+            const boardC = board[i];
+            if (boardC === undefined) {
+                undefCount++;
+            }
+        }
+        //  BoardがundefでHandがレンジの場合の動作
+        if (undefCount > 0) {
+            const denominator = nPr(deck.length, undefCount);
+            var p1Win = 0;
+            var p2Win = 0;
+            var draw = 0;
+            let arr = permutation(deck, undefCount);
+            // console.log('JudgeOdds', deck.length, denominator, undefCount);
+            for (let i = 0; i < arr.length; i++) {
+                const candidates = arr[i];
+                var count = 0;
+                var c1 = [];
+                for (let j = 0; j < player1.length; j++) {
+                    const element = player1[j];
+                    if (element === undefined) {
+                        c1.push(candidates[count++]);
+                    } else {
+                        c1.push(element);
+                    }
+                }
+                var c2 = [];
+                for (let j = 0; j < player2.length; j++) {
+                    const element = player2[j];
+                    if (element === undefined) {
+                        c2.push(candidates[count++]);
+                    } else {
+                        c2.push(element);
+                    }
+                }
+                var b = [];
+                for (let j = 0; j < board.length; j++) {
+                    const element = board[j];
+                    if (element === undefined) {
+                        b.push(candidates[count++]);
+                    } else {
+                        b.push(element);
+                    }
+                }
+                // console.log('JudgeOdds', c1, c2, b);
+                const judge1 = JudgeHand(c1, b);
+                const judge2 = JudgeHand(c2, b);
+                // console.log('JudgeOdds', judge1?.key, judge2?.key);
+                if (judge1?.flag && judge2?.flag) {
+                    const judge = JudgeWin(judge1, judge2);
+                    // console.log('JudgeOdds judge', judge);
+                    switch (judge) {
                         case 1:
                             // console.log('JudgeOdds p1Win');
                             p1Win++;
@@ -368,35 +511,131 @@ export function JudgeOdds(
                             draw++;
                             break;
                         default:
-                            console.log('JudgeWin ERROR');
+                            // console.log('JudgeOdds ERROR', judge);
                             break;
                     }
                 } else {
-                    console.log('JudgeWin ERROR');
+                    // console.log('JudgeOdds ERROR', judge1, judge2);
                 }
+            }
+            return [p1Win / denominator * 100.0, p2Win / denominator * 100.0, draw / denominator * 100.0];
+        } else {
+            // 未定がない場合は現状の勝ち負けをそのまま出力する
+            const judge1 = JudgeHand(player1, board);
+            const judge2 = JudgeHand(player2, board);
+            if (judge1?.flag && judge2?.flag) {
+                const judge = JudgeWin(judge1, judge2);
+                // console.log('JudgeOdds judge', judge);
+                switch (judge) {
+                    case 1:
+                        // console.log('JudgeOdds p1Win');
+                        res = [100, 0, 0];
+                        break;
+                    case 2:
+                        // console.log('JudgeOdds p2Win');
+                        res = [0, 100, 0];
+                        break;
+                    case 0:
+                        // console.log('JudgeOdds draw');
+                        res = [0, 0, 100];
+                        break;
+                    default:
+                        // console.log('JudgeOdds ERROR', judge);
+                        break;
+                }
+                return res;
             }
         }
     }
-
-    var sum = p1Win + p2Win + draw;
-    var win1 = p1Win / (sum) * 100.0;
-    var win2 = p2Win / (sum) * 100.0;
-    // console.log('JudgeOdds', p1Win, p2Win, draw)
-    res = [win1, win2];
     return res;
+}
+export function JudgeOddsCombination(
+    comb1?: PlayCard[][],
+    comb2?: PlayCard[][],
+    board?: PlayCard[],
+    deck?: PlayCardDeck,
+): number[] {
+    if (deck === undefined || comb1 === undefined || comb2 === undefined || board === undefined) {
+        return [];
+    }
+
+    var result = [0, 0, 0];
+    var cnt = 0;
+    for (let i = 0; i < comb1.length; i++) {
+        const element1 = comb1[i];
+        for (let j = 0; j < comb2.length; j++) {
+            const element2 = comb2[j];
+            var res = JudgeOdds(element1, element2, board, deck.deck);
+            // if(res[1] === 100){
+            //     console.log('OddsCalculatorHome res', element2[0].num, element2[1].num);
+            // }
+            result[0] += res[0];
+            result[1] += res[1];
+            result[2] += res[2];
+            cnt++;
+        }
+    }
+    result[0] /= cnt;
+    result[1] /= cnt;
+    result[2] /= cnt;
+    console.log('OddsCalculatorHome result', result);
+
+    return result;
+}
+export function JudgeOddsRange(
+    range1?: Map<string, boolean>,
+    range2?: Map<string, boolean>,
+    player1?: PlayCard[],
+    player2?: PlayCard[],
+    board?: PlayCard[],
+    enables?: PlayCard[],
+): { comb1: PlayCard[][], comb2: PlayCard[][], result: number[] } | undefined {
+    if (enables === undefined || player1 === undefined || player2 === undefined || board === undefined) {
+        return undefined;
+    }
+
+    // var enables = deck.get_enables();
+    var comb1;
+    var comb2;
+    if (range1 != undefined && enables != undefined) {
+        comb1 = GetCombination(range1, enables);
+    } else {
+        comb1 = [player1]
+    }
+    if (range2 != undefined && enables != undefined) {
+        comb2 = GetCombination(range2, enables);
+        // console.log('OddsCalculatorHome comb2', comb2);
+    } else {
+        comb2 = [player2]
+    }
+    // console.log('JudgeOddsRange', comb1, comb2, enables);
+    var result = [0, 0, 0];
+    var cnt = 0;
+    for (let i = 0; i < comb1.length; i++) {
+        const element1 = comb1[i];
+        for (let j = 0; j < comb2.length; j++) {
+            const element2 = comb2[j];
+            var res = JudgeOdds(element1, element2, board, enables);
+            // if(res[1] === 100){
+            //     console.log('OddsCalculatorHome res', element2[0].num, element2[1].num);
+            // }
+            result[0] += res[0];
+            result[1] += res[1];
+            result[2] += res[2];
+            cnt++;
+        }
+    }
+    result[0] /= cnt;
+    result[1] /= cnt;
+    result[2] /= cnt;
+    // console.log('OddsCalculatorHome result', result);
+
+    return { comb1: comb1, comb2: comb2, result: result };
 }
 
 function JudgeWin(
-    player1: {
-        key: string;
-        flag?: boolean | undefined;
-        cards?: PlayCard[] | undefined;
-    },
-    player2: {
-        key: string;
-        flag?: boolean | undefined;
-        cards?: PlayCard[] | undefined;
-    }
+    player1: JudgedHand,
+    player2: JudgedHand
 ) {
     var e1 = (PokerHandRanking as any)[player1?.key] as PokerHandRanking;
     var e2 = (PokerHandRanking as any)[player2?.key] as PokerHandRanking;
@@ -564,6 +803,7 @@ function JudgeWin(
                                     // 同じならハイカード勝負
                                     n1 = player1?.cards?.at(4)?.num;
                                     n2 = player2?.cards?.at(4)?.num;
+                                    // console.log('JudgeWin PokerHandRanking.TWO_PAIR', n1, n2);
                                     if (n1 != undefined && n2 != undefined) {
                                         if (n1 < n2) {
                                             // numは数字がでかい方が強い
@@ -637,6 +877,76 @@ function JudgeWin(
         }
     }
     return -1;
+}
+
+export function GetCombination(range: Map<string, boolean>, enables: PlayCard[]) {
+    // console.log('GetCombination', range, enables);
+    var res: PlayCard[][] = [];
+    try {
+        range.forEach((value, key, map) => {
+            if (value) {
+                var keys = key.split('');
+                var n1 = GetNUMfromString(keys[0]);
+                var n2 = GetNUMfromString(keys[1]);
+                var isSuited = false;
+                if (keys.length === 3) {
+                    if (keys[2] === 's') {
+                        isSuited = true;
+                    }
+                }
+                // console.log('GetCombination', keys, n1, n2, isSuited);
+                if (isSuited) {
+                    for (let i = 0; i < SuitKeys.length; i++) {
+                        const element: any = SuitKeys[i];
+                        const strA: keyof typeof Suit = element;
+                        const suit = Suit[strA];
+                        const c1 = new PlayCard(suit, n1, true);
+                        const c2 = new PlayCard(suit, n2, true);
+                        // console.log('GetCombination', c1, c2, enables.includes(c1), enables.includes(c2));
+                        // const resCom = PlayCardCompare(enables, c1);
+                        // console.log('GetCombination resCom', resCom);
+                        if (PlayCardCompare(enables, c1) && PlayCardCompare(enables, c2)) {
+                            res.push([c1, c2]);
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < SuitKeys.length; i++) {
+                        const element: any = SuitKeys[i];
+                        const str1: keyof typeof Suit = element;
+                        const suit1 = Suit[str1];
+                        const c1 = new PlayCard(suit1, n1, true);
+                        for (let j = 0; j < SuitKeys.length; j++) {
+                            const element2: any = SuitKeys[j];
+                            const str2: keyof typeof Suit = element2;
+                            const suit2 = Suit[str2];
+                            const c2 = new PlayCard(suit2, n2, true);
+                            // console.log('GetCombination', c1, c2, enables.includes(c1), enables.includes(c2));
+                            if (PlayCardCompare(enables, c1) && PlayCardCompare(enables, c2) && (suit1 != suit2)) {
+                                res.push([c1, c2]);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        // console.log('GetCombination', range, error);
+    }
+    return res;
+}
+
+export function GetTierFromString(str: string): YokosawaHandRangeTier | undefined {
+    for (let i = 0; i < PorkerHands.length; i++) {
+        const elementI = PorkerHands[i];
+        for (let j = 0; j < elementI.length; j++) {
+            const elementJ = elementI[j];
+            if (str === elementJ.HandStr) {
+                return elementJ.YokosawaTier;
+            }
+        }
+    }
+
+    return undefined;
 }
 
 export const PorkerHands: PorkerHand[][] = [
@@ -837,4 +1147,49 @@ export const PorkerHands: PorkerHand[][] = [
     ],
 ]
 
+// 2枚のカードリストから共通のカードを抽出する
+function GetCommunityCards(cards1: PlayCard[] | undefined, cards2: PlayCard[] | undefined) {
+    var res = [];
+    if (cards1 != undefined && cards2 != undefined) {
+        for (let i = 0; i < cards1.length; i++) {
+            const c1 = cards1[i];
+            for (let j = 0; j < cards2.length; j++) {
+                const c2 = cards2[j];
+                if (c1.num === c2.num && c1.suit === c2.suit) {
+                    res.push(c2);
+                }
+            }
+        }
+    }
+    return res;
+}
+// cards1にcards2が含まれるかどうか判定する
+function GetIsCommunityCards(cards1: PlayCard[] | undefined, cards2: PlayCard[] | undefined) {
+    var res = [];
+    if (cards1 != undefined && cards2 != undefined) {
+        for (let i = 0; i < cards1.length; i++) {
+            const c1 = cards1[i];
+            var flag = false;
+            if (c1 === undefined) {
+                res.push(false);
+                continue;
+            }
+            for (let j = 0; j < cards2.length; j++) {
+                const c2 = cards2[j];
+                if (c2 === undefined) {
+                    continue;
+                }
+                if (c1.num === c2.num && c1.suit === c2.suit) {
+                    res.push(true);
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                res.push(false);
+            }
+        }
+    }
+    return res;
+}
 

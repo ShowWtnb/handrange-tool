@@ -24,6 +24,27 @@ export function combinations(list: any, k: number): any {
     }
     return res;
 };
+export function permutation(list: any, k: number): any {
+    let res = [];
+    if (list.length < k) {
+        return [];
+    }
+    if (k === 1) {
+        for (let i = 0; i < list.length; i++) {
+            res[i] = [list[i]];
+        }
+    } else {
+        for (let i = 0; i < list.length; i++) {
+            let parts = list.slice(0);
+            parts.splice(i, 1)[0];
+            let row = permutation(parts, k - 1);
+            for (let j = 0; j < row.length; j++) {
+                res.push([list[i]].concat(row[j]));
+            }
+        }
+    }
+    return res;
+};
 
 export function nCr(n: number, r: number): number {
     if (r == 0 || r == n) {
@@ -33,4 +54,17 @@ export function nCr(n: number, r: number): number {
     }
 
     return nCr(n - 1, r) + nCr(n - 1, r - 1);
+}
+export function nPr(n: number, r: number): number {
+    if (r == 0) {
+        return 1;
+    }
+
+    return n * nPr(n - 1, r - 1);
+}
+export function factorial(n: number): number {
+    if (n == 0) {
+        return 1;
+    }
+    return n * factorial(n - 1);
 }

@@ -4,7 +4,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { MoreVert, Terminal } from '@mui/icons-material';
-import { theme } from '@/const/theme/theme';
+import { modalStyle, theme } from '@/const/theme/theme';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 const markdownString = `
 # Poker Tools
@@ -37,20 +37,6 @@ const backN2br = (msg?: string) => {
         return <div>{texts}</div>;
     }
 }
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 450,
-    height: 600,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    overflow: 'auto',
-};
 
 interface ExpandMoreProps extends IconButtonProps {
     expand: boolean;
@@ -131,7 +117,7 @@ export const LicenseScreen = (prop: LicenseScreenProps) => {
         // console.log('LicenseScreen', color);
         return (
             <Grid item margin={0.5} xs={12}>
-                <Card sx={{ maxWidth: style.width }} style={{ backgroundColor: color.dark }}>
+                <Card sx={{ maxWidth: modalStyle.width }} style={{ backgroundColor: color.dark }}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                             {'Poker Tools @0.1.0'}
@@ -168,7 +154,7 @@ export const LicenseScreen = (prop: LicenseScreenProps) => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
+                <Box sx={modalStyle}>
                     <div>
                         <Grid margin={0} container spacing={0} alignItems="center" justifyContent="center">
                             <div>
@@ -194,7 +180,7 @@ export const LicenseScreen = (prop: LicenseScreenProps) => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
+                <Box sx={modalStyle}>
                     <div>
                         <Grid margin={0} container spacing={0} alignItems="center" justifyContent="center">
                             <div>
@@ -217,7 +203,7 @@ export const LicenseScreen = (prop: LicenseScreenProps) => {
                                     const url = licenseObj.url;
                                     return (
                                         <Grid item key={value} margin={0.5} xs={12}>
-                                            <Card sx={{ maxWidth: style.width }}>
+                                            <Card sx={{ maxWidth: modalStyle.width }}>
                                                 {/* <CardHeader
                                             // avatar={
                                             //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">

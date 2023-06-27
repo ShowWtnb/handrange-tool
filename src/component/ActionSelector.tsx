@@ -4,7 +4,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from 'react';
-import { Actions, YokosawaHandRangeTier } from '@/const/const_poker';
+import { Actions, ActionsKeys, YokosawaHandRangeTier, YokosawaHandRangeTierKeys } from '@/const/const_poker';
 import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 // import { createStyles, makeStyles } from "@mui/styles";
@@ -119,8 +119,8 @@ export default function ActionSelector(prop: PropActionSelector) {
         callback(tier, action, (event.target.checked as boolean));
     }
 
-    const keys = Object.keys(YokosawaHandRangeTier).filter((v) => isNaN(Number(v)));
-    const actions = Object.keys(Actions).filter((v) => isNaN(Number(v)));
+    const keys = YokosawaHandRangeTierKeys;
+    const actions = ActionsKeys;
     // console.log(keys);  // [A,B,C]
     // const red = '#FF0000';
     // const label = { inputProps: { 'aria-label': 'BB' } };

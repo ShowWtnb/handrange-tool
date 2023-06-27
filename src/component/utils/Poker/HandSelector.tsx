@@ -1,20 +1,23 @@
 import PlayCardSelector from "@/component/play_card/PlayCardSelector";
 import { PlayCard, PlayCardDeck } from "@/const/const_playCard";
 import { RemoveCircleOutline, Shuffle } from "@mui/icons-material";
-import { Box, Grid, IconButton, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, FormControlLabel, Grid, IconButton, Switch, Tooltip, Typography } from "@mui/material";
+import { ChangeEvent, useEffect, useState } from "react";
+import HandRangeSelector from "./HandRangeSelector";
 
 interface HandSelectorProps {
     title?: string;
     deck?: PlayCardDeck;
     cards?: PlayCard[];
     onSelected?: any;
+    onRangeSelected?: any;
 }
 
 export default function HandSelector(prop: HandSelectorProps) {
     const [deck, setDeck] = useState(prop.deck);
     const [card1, setCard1] = useState<PlayCard>();
     const [card2, setCard2] = useState<PlayCard>();
+    const [isRangeMode, setIsRangeMode] = useState(false);
     useEffect(() => {
         if (prop.cards) {
             setCard1(prop.cards[0]);
@@ -72,6 +75,18 @@ export default function HandSelector(prop: HandSelectorProps) {
         // console.log('HandSelector shuffleBoard', c, card2);
     }
 
+    function onRangeModeChanged(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+        setIsRangeMode(checked);
+        if (prop.onRangeSelected) {
+            prop.onRangeSelected({ isRange: checked, list: event });
+        }
+    }
+    function onRangeSelected(event: any): void {
+        if (prop.onRangeSelected) {
+            prop.onRangeSelected({ isRange: true, list: event });
+        }
+    }
+
     return (
         <div>
             <Grid container spacing={1} alignItems="center">
@@ -88,23 +103,33 @@ export default function HandSelector(prop: HandSelectorProps) {
                         <Shuffle />
                     </IconButton>
                 </Grid>
-            </Grid>
-            {/* <Typography>{prop.title}</Typography> */}
-            <Box margin={1} sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 2 }}>
-                <Grid container spacing={1} alignItems="center" justifyContent="center">
-                    <Grid item xs={1} />
-                    <Grid item xs={4} >
-                        {/* <PlayCardSelector card={card1} deck={deck} onSelected={onSelected} /> */}
-                        {GetCard(card1, 0)}
+                <Grid item xs={4} alignContent="right" alignItems="right">
+                    <Grid container spacing={1} alignItems="center" justifyContent="right">
+                        <Grid item alignContent="right" alignItems="right">
+                            <Tooltip title="Turn on to range select mode">
+                                <FormControlLabel control={<Switch size="small" checked={isRangeMode} onChange={onRangeModeChanged} />} label="" />
+                            </Tooltip>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={1} />
-                    <Grid item xs={4}>
-                        {/* <PlayCardSelector card={card2} deck={deck} onSelected={onSelected} /> */}
-                        {GetCard(card2, 1)}
-                    </Grid>
-                    <Grid item xs={1} />
                 </Grid>
-            </Box>
+            </Grid>
+            {isRangeMode ? (<HandRangeSelector onSelected={onRangeSelected} />) : (
+                <Box margin={1} sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 2 }}>
+                    <Grid container spacing={1} alignItems="center" justifyContent="center">
+                        <Grid item xs={1} />
+                        <Grid item xs={4} >
+                            {/* <PlayCardSelector card={card1} deck={deck} onSelected={onSelected} /> */}
+                            {GetCard(card1, 0)}
+                        </Grid>
+                        <Grid item xs={1} />
+                        <Grid item xs={4}>
+                            {/* <PlayCardSelector card={card2} deck={deck} onSelected={onSelected} /> */}
+                            {GetCard(card2, 1)}
+                        </Grid>
+                        <Grid item xs={1} />
+                    </Grid>
+                </Box>
+            )}
         </div>
     );
 }
