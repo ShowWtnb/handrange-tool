@@ -64,12 +64,8 @@ export default function PlayerGrid(prop: PropPlayerGrid) {
                         }) */}
                         <Typography>{GetHandStrFromHand(status?.hand!)}</Typography>
                         <Stack overflow={'auto'} direction="row" spacing={1} padding={1}>
-                            <PlayCardUI card={status?.hand[0]}>
-
-                            </PlayCardUI>
-                            <PlayCardUI card={status?.hand[1]}>
-
-                            </PlayCardUI>
+                            <PlayCardUI card={status?.hand[0]}/>
+                            <PlayCardUI card={status?.hand[1]}/>
                         </Stack>
                         {/* <Box
                             sx={{
