@@ -41,7 +41,7 @@ export enum Actions {
     CHECK,
     CALL,
     RAISE,
-    RE_RAISE,
+    RERAISE,
 
     NONE = -1,
 }
