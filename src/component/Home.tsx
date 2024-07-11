@@ -81,7 +81,7 @@ export default function HomeComponent() {
         {/* <div style={{ height: 20 }}></div> */}
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <PokerTable styles={{ 'fontColor': 'red' }} />
+        {/* <PokerTable styles={{ 'fontColor': 'red' }} /> */}
         {/* <div style={{ height: 20 }}></div> */}
       </TabPanel>
       <TabPanel value={value} index={4}>
