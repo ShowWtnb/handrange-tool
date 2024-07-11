@@ -1,8 +1,9 @@
 // import { createStyles, makeStyles } from "@mui/styles";
 
 import { nPr, permutation } from "@/component/utils/utils";
-import { GetNUMfromString, PlayCardCompare, PlayCardDeck, Suit, SuitKeys } from "./const_playCard";
+import { GetNUMfromString, GetStringFromNUM, PlayCardCompare, PlayCardDeck, Suit, SuitKeys } from "./const_playCard";
 import { Num, PlayCard } from "./const_playCard";
+import PlayerStatus from "@/component/player/PlayerStatus";
 
 class PorkerHand {
     PowerNumber: number;
@@ -24,13 +25,187 @@ export enum YokosawaHandRangeTier {
     TIER_6,
     TIER_7,
     TIER_8,
+    TIER_9,
+
+    NONE = -1,
 }
 export const YokosawaHandRangeTierKeys = Object.keys(YokosawaHandRangeTier).filter((v) => isNaN(Number(v)));
+export function getTierKeyName(value?: YokosawaHandRangeTier) {
+    if (value === undefined) {
+        return YokosawaHandRangeTier[YokosawaHandRangeTier.NONE];
+    }
+    return YokosawaHandRangeTier[value];
+}
 export enum Actions {
-    CALL = 0,
-    RERAISE,
+    FOLD = 0,
+    CHECK,
+    CALL,
+    RAISE,
+    RE_RAISE,
+
+    NONE = -1,
+}
+export function getActionsKeyName(value?: Actions) {
+    if (value === undefined) {
+        return Actions[Actions.NONE];
+    }
+    return Actions[value];
 }
 export const ActionsKeys = Object.keys(Actions).filter((v) => isNaN(Number(v)));
+export function GetActionStyle(action: Actions) {
+    switch (action) {
+        case Actions.FOLD:
+            return { background: '#696969', foreground: '#E8E8E8' };
+        case Actions.CHECK:
+            return { background: 'green', foreground: '#E8E8E8' };
+        case Actions.CALL:
+            return { background: 'green', foreground: '#E8E8E8' };
+        case Actions.RAISE:
+            return { background: 'blue', foreground: '#E8E8E8' };
+        default:
+            return { background: '#696969', foreground: '#E8E8E8' };
+    }
+}
+
+export enum Positions {
+    BB = 0,
+    SB,
+    BTN,
+    CO,
+    HJ,
+    LJ,
+    UTG_2,
+    UTG_1,
+    UTG,
+
+    NONE = -1,
+}
+export const PositionsKeys = Object.keys(Positions).filter((v) => isNaN(Number(v)));
+export function getPositionsKeyName(value?: Positions) {
+    if (value === undefined) {
+        return Positions[Positions.NONE];
+    } else if (value === Positions.UTG_1) {
+        return 'UTG+1';
+    } else if (value === Positions.UTG_2) {
+        return 'UTG+2';
+    }
+    return Positions[value];
+}
+
+export function GetTierFromPosition(position: Positions): YokosawaHandRangeTier {
+    // キャッシュのランク
+    if (position >= Positions.UTG) {
+        // 後ろに8人(Tier1, 2)
+        return YokosawaHandRangeTier.TIER_2
+    } else if (position >= Positions.UTG_2) {
+        // 後ろに6~7人
+        return YokosawaHandRangeTier.TIER_3
+    } else if (position >= Positions.HJ) {
+        // 後ろに4~5人
+        return YokosawaHandRangeTier.TIER_4
+    } else if (position >= Positions.CO) {
+        // 後ろに3人
+        return YokosawaHandRangeTier.TIER_5
+    } else if (position >= Positions.SB) {
+        // 後ろに0~2人
+        return YokosawaHandRangeTier.TIER_6
+    } else if (position >= Positions.BB) {
+        // 後ろに0人
+        return YokosawaHandRangeTier.TIER_6
+    }
+    // TODO TIER_7, 8はBTNのオープンに対してBBのみがCallしてよい、実装の仕方が難しい
+    return YokosawaHandRangeTier.TIER_9;
+}
+export function JudgePreFlopAction(p: PlayerStatus, a: PlayerStatus[]): Actions {
+    const position = p._position;
+    const tier = p.tier;
+    // 前のアクションを参照する必要がある
+    // オープナーを探す
+    let idx = 0;
+    let rank = YokosawaHandRangeTier.NONE;
+    for (; idx < a.length; idx++) {
+        const element = a[idx];
+        if (element.action === undefined) {
+            continue;
+        }
+        if (element.action >= Actions.RAISE) {
+            // レイズしたらこの人のポジションを基準にする
+            rank = GetTierFromPosition(element.position);
+            console.log('JudgePreFlopAction', getPositionsKeyName(element.position), 'open', 'hand tier is', getTierKeyName(element.tier), 'needs', getTierKeyName(rank));
+            break;
+        }
+    }
+
+    // 最後にアクションした人より1Tier高いならCall、2Tier以上高いならレイズ
+    idx++;
+    for (; idx < a.length; idx++) {
+        const element = a[idx];
+        if (element.action === undefined) {
+            continue;
+        }
+        console.log('JudgePreFlopAction', getPositionsKeyName(element.position), 'need', getTierKeyName(rank - 1), 'to Call', getTierKeyName(rank - 2), 'to Raise');
+        if (element.action >= Actions.RAISE) {
+            // レイズしたら最後にアクションしていた人のポジションに+2Tierしたものを基準にする
+            console.log('JudgePreFlopAction', getPositionsKeyName(element.position), 're-raise', 'hand tier is', getTierKeyName(element.tier), 'needs', getTierKeyName(rank));
+            rank = rank - 2;
+        } else if (element.action >= Actions.CALL) {
+            // コールしたら最後にアクションしていた人のポジションに+1Tierしたものを基準にする
+            console.log('JudgePreFlopAction', getPositionsKeyName(element.position), 'call', 'hand tier is', getTierKeyName(element.tier), 'needs', getTierKeyName(rank));
+            rank = rank - 1;
+        }
+    }
+    if (rank === YokosawaHandRangeTier.NONE) {
+        // 誰もアクションしていない場合
+        rank = GetTierFromPosition(position);
+        if (position === Positions.BB) {
+            return Actions.CHECK
+        } else {
+            if (tier <= rank) {
+                return Actions.RAISE
+            } else {
+                return Actions.FOLD
+            }
+        }
+    } else {
+        if (position === Positions.BB) {
+            // アクションしているのがBTN, SBだけの場合、コールレンジが広くなる
+            if (isOnlyBtnActions(a)) {
+                if (tier <= YokosawaHandRangeTier.TIER_7) {
+                    return Actions.CALL
+                }
+            }
+        }
+        if (tier <= rank - 2) {
+            return Actions.RAISE
+        } else if (tier <= rank - 1) {
+            return Actions.CALL
+        } else {
+            return Actions.FOLD
+        }
+    }
+
+    return Actions.NONE
+}
+
+function isOnlyBtnActions(a: PlayerStatus[]) {
+    var cnt = 0;
+    var pos = Positions.NONE;
+    for (let index = 0; index < a.length; index++) {
+        const action = a[index];
+        if (action.action === Actions.RAISE || action.action === Actions.CALL) {
+            cnt++;
+            pos = action.position;
+            break;
+        }
+    }
+    if (cnt === 1 && pos <= Positions.BTN) {
+        return true;
+    }
+    return false;
+}
+
+
+
 export enum PokerHandRanking {
     ROYAL_FLUSH = 0,
     STRAIGHT_FLUSH,
@@ -48,23 +223,25 @@ export const PokerHandRankingKeys = Object.keys(PokerHandRanking).filter((v) => 
 export function GetTierStyle(tier: YokosawaHandRangeTier) {
     switch (tier) {
         case YokosawaHandRangeTier.TIER_1:
-            return { background: '#191970', foreground: '#FFFFFF' };
+            return { background: '#191970', foreground: '#E8E8E8' };
         case YokosawaHandRangeTier.TIER_2:
-            return { background: '#FF0000', foreground: '#000000' };
+            return { background: '#FF0000', foreground: '#262626' };
         case YokosawaHandRangeTier.TIER_3:
-            return { background: '#FFD700', foreground: '#000000' };
+            return { background: '#FFD700', foreground: '#262626' };
         case YokosawaHandRangeTier.TIER_4:
-            return { background: '#228B22', foreground: '#FFFFFF' };
+            return { background: '#228B22', foreground: '#262626' };
         case YokosawaHandRangeTier.TIER_5:
-            return { background: '#1E90FF', foreground: '#FFFFFF' };
+            return { background: '#1E90FF', foreground: '#262626' };
         case YokosawaHandRangeTier.TIER_6:
-            return { background: '#FFFFFF', foreground: '#000000' };
+            return { background: '#FFFFFF', foreground: '#262626' };
         case YokosawaHandRangeTier.TIER_7:
-            return { background: '#D8BFD8', foreground: '#000000' };
+            return { background: '#B3B3B3', foreground: '#262626' };
         case YokosawaHandRangeTier.TIER_8:
-            return { background: '#696969', foreground: '#000000' };
+            return { background: '#D8BFD8', foreground: '#262626' };
+        case YokosawaHandRangeTier.TIER_9:
+            return { background: '#696969', foreground: '#E8E8E8' };
         default:
-            return { background: '#696969', foreground: '#000000' };
+            return { background: '#696969', foreground: '#E8E8E8' };
     }
 }
 
@@ -948,6 +1125,52 @@ export function GetTierFromString(str: string): YokosawaHandRangeTier | undefine
 
     return undefined;
 }
+export function GetTierFromHand(hand: PlayCard[]): YokosawaHandRangeTier | undefined {
+    const str = GetHandStrFromHand(hand);
+    for (let i = 0; i < PorkerHands.length; i++) {
+        const elementI = PorkerHands[i];
+        for (let j = 0; j < elementI.length; j++) {
+            const elementJ = elementI[j];
+            if (str === elementJ.HandStr) {
+                return elementJ.YokosawaTier;
+            }
+        }
+    }
+
+    return undefined;
+}
+export function GetHandStrFromHand(hand: PlayCard[]): string | undefined {
+    if (hand.length !== 2) {
+        return undefined;
+    }
+    if (hand[0].num === undefined || hand[1].num === undefined) {
+        return undefined;
+    }
+    var str = ''
+    // ポケットペア
+    if (hand[0].num === hand[1].num) {
+        str = GetStringFromNUM(hand[0].num) + GetStringFromNUM(hand[1].num);
+    } else {
+        // スーテッド
+        if (hand[0].suit === hand[1].suit) {
+            if (hand[0].num > hand[1].num) {
+                str = GetStringFromNUM(hand[0].num) + GetStringFromNUM(hand[1].num) + 's';
+            } else {
+                str = GetStringFromNUM(hand[1].num) + GetStringFromNUM(hand[0].num) + 's';
+            }
+        }
+        // オフ
+        else {
+            if (hand[0].num > hand[1].num) {
+                str = GetStringFromNUM(hand[0].num) + GetStringFromNUM(hand[1].num) + 'o';
+            } else {
+                str = GetStringFromNUM(hand[1].num) + GetStringFromNUM(hand[0].num) + 'o';
+            }
+        }
+    }
+
+    return str;
+}
 
 export const PorkerHands: PorkerHand[][] = [
     [
@@ -1023,7 +1246,7 @@ export const PorkerHands: PorkerHand[][] = [
         new PorkerHand(9, YokosawaHandRangeTier.TIER_8, "T5s"),
         new PorkerHand(7, YokosawaHandRangeTier.TIER_8, "T4s"),
         new PorkerHand(5, YokosawaHandRangeTier.TIER_8, "T3s"),
-        new PorkerHand(4, YokosawaHandRangeTier.TIER_8, "T2s"),
+        new PorkerHand(4, YokosawaHandRangeTier.TIER_9, "T2s"),
     ],
     [
         new PorkerHand(27, YokosawaHandRangeTier.TIER_5, "A9o"),
@@ -1036,9 +1259,9 @@ export const PorkerHands: PorkerHand[][] = [
         new PorkerHand(17, YokosawaHandRangeTier.TIER_6, "97s"),
         new PorkerHand(10, YokosawaHandRangeTier.TIER_7, "96s"),
         new PorkerHand(9, YokosawaHandRangeTier.TIER_8, "95s"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "94s"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "93s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "92s"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "94s"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "93s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "92s"),
     ],
     [
         new PorkerHand(24, YokosawaHandRangeTier.TIER_6, "A8o"),
@@ -1051,98 +1274,98 @@ export const PorkerHands: PorkerHand[][] = [
         new PorkerHand(19, YokosawaHandRangeTier.TIER_6, "87s"),
         new PorkerHand(15, YokosawaHandRangeTier.TIER_7, "86s"),
         new PorkerHand(10, YokosawaHandRangeTier.TIER_8, "85s"),
-        new PorkerHand(5, YokosawaHandRangeTier.TIER_8, "84s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "83s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "82s"),
+        new PorkerHand(5, YokosawaHandRangeTier.TIER_9, "84s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "83s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "82s"),
     ],
     [
         new PorkerHand(22, YokosawaHandRangeTier.TIER_6, "A7o"),
         new PorkerHand(9, YokosawaHandRangeTier.TIER_8, "K7o"),
         new PorkerHand(6, YokosawaHandRangeTier.TIER_8, "Q7o"),
-        new PorkerHand(5, YokosawaHandRangeTier.TIER_8, "J7o"),
-        new PorkerHand(6, YokosawaHandRangeTier.TIER_8, "T7o"),
+        new PorkerHand(5, YokosawaHandRangeTier.TIER_9, "J7o"),
+        new PorkerHand(6, YokosawaHandRangeTier.TIER_9, "T7o"),
         new PorkerHand(7, YokosawaHandRangeTier.TIER_8, "97o"),
         new PorkerHand(10, YokosawaHandRangeTier.TIER_8, "87o"),
         new PorkerHand(58, YokosawaHandRangeTier.TIER_3, "77"),
         new PorkerHand(15, YokosawaHandRangeTier.TIER_6, "76s"),
         new PorkerHand(10, YokosawaHandRangeTier.TIER_7, "75s"),
         new PorkerHand(9, YokosawaHandRangeTier.TIER_8, "74s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "73s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "72s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "73s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "72s"),
     ],
     [
         new PorkerHand(18, YokosawaHandRangeTier.TIER_7, "A6o"),
         new PorkerHand(9, YokosawaHandRangeTier.TIER_8, "K6o"),
-        new PorkerHand(6, YokosawaHandRangeTier.TIER_8, "Q6o"),
-        new PorkerHand(4, YokosawaHandRangeTier.TIER_8, "J6o"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "T6o"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "96o"),
-        new PorkerHand(4, YokosawaHandRangeTier.TIER_8, "86o"),
-        new PorkerHand(7, YokosawaHandRangeTier.TIER_8, "76o"),
+        new PorkerHand(6, YokosawaHandRangeTier.TIER_9, "Q6o"),
+        new PorkerHand(4, YokosawaHandRangeTier.TIER_9, "J6o"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "T6o"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "96o"),
+        new PorkerHand(4, YokosawaHandRangeTier.TIER_9, "86o"),
+        new PorkerHand(7, YokosawaHandRangeTier.TIER_9, "76o"),
         new PorkerHand(51, YokosawaHandRangeTier.TIER_4, "66"),
         new PorkerHand(11, YokosawaHandRangeTier.TIER_6, "65s"),
         new PorkerHand(10, YokosawaHandRangeTier.TIER_7, "64s"),
         new PorkerHand(4, YokosawaHandRangeTier.TIER_8, "63s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "62s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "62s"),
     ],
     [
         new PorkerHand(21, YokosawaHandRangeTier.TIER_8, "A5o"),
         new PorkerHand(9, YokosawaHandRangeTier.TIER_8, "K5o"),
-        new PorkerHand(6, YokosawaHandRangeTier.TIER_8, "Q5o"),
-        new PorkerHand(4, YokosawaHandRangeTier.TIER_8, "J5o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "T5o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "95o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "85o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "75o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "65o"),
+        new PorkerHand(6, YokosawaHandRangeTier.TIER_9, "Q5o"),
+        new PorkerHand(4, YokosawaHandRangeTier.TIER_9, "J5o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "T5o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "95o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "85o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "75o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "65o"),
         new PorkerHand(44, YokosawaHandRangeTier.TIER_4, "55"),
         new PorkerHand(11, YokosawaHandRangeTier.TIER_7, "54s"),
         new PorkerHand(8, YokosawaHandRangeTier.TIER_8, "53s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "52s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "52s"),
     ],
     [
         new PorkerHand(18, YokosawaHandRangeTier.TIER_8, "A4o"),
-        new PorkerHand(8, YokosawaHandRangeTier.TIER_8, "K4o"),
-        new PorkerHand(5, YokosawaHandRangeTier.TIER_8, "Q4o"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "J4o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "T4o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "94o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "84o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "74o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "64o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "54o"),
+        new PorkerHand(8, YokosawaHandRangeTier.TIER_9, "K4o"),
+        new PorkerHand(5, YokosawaHandRangeTier.TIER_9, "Q4o"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "J4o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "T4o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "94o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "84o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "74o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "64o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "54o"),
         new PorkerHand(39, YokosawaHandRangeTier.TIER_5, "44"),
         new PorkerHand(6, YokosawaHandRangeTier.TIER_8, "43s"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "42s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "42s"),
     ],
     [
         new PorkerHand(16, YokosawaHandRangeTier.TIER_8, "A3o"),
-        new PorkerHand(8, YokosawaHandRangeTier.TIER_8, "K3o"),
-        new PorkerHand(5, YokosawaHandRangeTier.TIER_8, "Q3o"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "J3o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "T3o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "93o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "83o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "73o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "63o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "53o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "43o"),
+        new PorkerHand(8, YokosawaHandRangeTier.TIER_9, "K3o"),
+        new PorkerHand(5, YokosawaHandRangeTier.TIER_9, "Q3o"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "J3o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "T3o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "93o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "83o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "73o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "63o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "53o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "43o"),
         new PorkerHand(33, YokosawaHandRangeTier.TIER_5, "33"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "32s"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "32s"),
     ],
     [
         new PorkerHand(15, YokosawaHandRangeTier.TIER_8, "A2o"),
-        new PorkerHand(7, YokosawaHandRangeTier.TIER_8, "K2o"),
-        new PorkerHand(4, YokosawaHandRangeTier.TIER_8, "Q2o"),
-        new PorkerHand(3, YokosawaHandRangeTier.TIER_8, "J2o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "T2o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "92o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "82o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "72o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "62o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "52o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "42o"),
-        new PorkerHand(-1, YokosawaHandRangeTier.TIER_8, "32o"),
+        new PorkerHand(7, YokosawaHandRangeTier.TIER_9, "K2o"),
+        new PorkerHand(4, YokosawaHandRangeTier.TIER_9, "Q2o"),
+        new PorkerHand(3, YokosawaHandRangeTier.TIER_9, "J2o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "T2o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "92o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "82o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "72o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "62o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "52o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "42o"),
+        new PorkerHand(-1, YokosawaHandRangeTier.TIER_9, "32o"),
         new PorkerHand(28, YokosawaHandRangeTier.TIER_5, "22"),
     ],
 ]
@@ -1192,4 +1415,5 @@ function GetIsCommunityCards(cards1: PlayCard[] | undefined, cards2: PlayCard[] 
     }
     return res;
 }
+
 

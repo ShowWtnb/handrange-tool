@@ -134,7 +134,7 @@ export default function ActionSelector(prop: PropActionSelector) {
                 <Grid item xs={6}>
                     <Typography>Opener</Typography>
                     <Box sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 1 }}>
-                        <Box margin={2}>
+                        <Box margin={1}>
                             <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">Open</InputLabel>
                                 <Select
@@ -176,11 +176,11 @@ export default function ActionSelector(prop: PropActionSelector) {
                 <Grid item xs={6}>
                     <Typography>Caller</Typography>
                     <Box sx={{ border: 1, borderColor: 'ButtonShadow', borderRadius: 1 }}>
-                        <Box margin={2}>
-                            <Grid container spacing={1} alignItems="center" justifyContent="center">
-                                <Grid item xs={6}>
+                        <Box margin={1}>
+                            <Grid container spacing={0} alignItems="center" justifyContent="center">
+                                <Grid item xs>
                                     <Box sx={{ justifyContent: 'center' }}>
-                                        <Grid container spacing={0} alignItems="center" justifyContent="center">
+                                        <Grid container spacing={0} alignItems="center" justifyContent="left">
                                             <Grid item>
                                                 <Checkbox checked={isBB} onChange={onBBCheckBoxChanged} />
                                             </Grid>
@@ -188,16 +188,9 @@ export default function ActionSelector(prop: PropActionSelector) {
                                                 <Typography>BB</Typography>
                                             </Grid>
                                         </Grid>
-                                        {/* <FormControlLabel
-                                    label="BB"
-                                    control={
-                        <Checkbox checked={isBB} onChange={onBBCheckBoxChanged} />
-                    }
-                                    style={{ minWidth: 125 }}
-                                /> */}
                                     </Box>
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={9}>
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Action</InputLabel>
                                         <Select

@@ -3,9 +3,11 @@ import { Typography } from "@mui/material";
 
 export class NumberUIProps {
     card?: PlayCard
+    fontsize?:string = '100%';
 }
 
 export default function NumberUI(props: NumberUIProps) {
+    const fontsize = props.fontsize;
     var suit = props.card?.suit;
     var color = 'black';
     if (suit != undefined) {
@@ -53,7 +55,7 @@ export default function NumberUI(props: NumberUIProps) {
     }
     return (
         <div>
-            <Typography sx={{ fontWeight: 'bold' }} fontSize={'4em'} align="center" color={color}>{numStr}</Typography>
+            <Typography sx={{ fontWeight: 'bold' }} fontSize={fontsize} align="center" color={color}>{numStr}</Typography>
         </div>
     );
 }

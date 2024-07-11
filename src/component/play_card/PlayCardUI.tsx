@@ -22,6 +22,7 @@ export default function PlayCardUI(prop: PlayCardUIProps) {
             prop.onClicked(event, c);
         }
     }
+    const fontsize = '200%';
     if (c === undefined) {
         return (
             <Button onClick={onCardClicked}>
@@ -29,10 +30,10 @@ export default function PlayCardUI(prop: PlayCardUIProps) {
                     <Grid container spacing={0.5} alignItems="center" justifyContent="center">
                         <Grid container spacing={0} alignItems="center" justifyContent="center">
                             <Grid item xs={6}>
-                                <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
+                                <Typography sx={{ fontWeight: 'bold' }} fontSize={fontsize} align="center" color="black">{'?'}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography sx={{ fontWeight: 'bold' }} fontSize={'5em'} align="center" color="black">{'?'}</Typography>
+                                <Typography sx={{ fontWeight: 'bold' }} fontSize={fontsize} align="center" color="black">{'?'}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -46,10 +47,10 @@ export default function PlayCardUI(prop: PlayCardUIProps) {
                     <Card style={{ backgroundColor: "#DCDCDC" }}>
                         <Grid container spacing={2} alignItems="center" justifyContent="center">
                             <Grid item xs={5}>
-                                <SuitUI suit={c.suit} />
+                                <SuitUI suit={c.suit} fontsize={fontsize}/>
                             </Grid>
                             <Grid item xs={5}>
-                                <NumberUI card={c} />
+                                <NumberUI card={c} fontsize={fontsize}/>
                             </Grid>
                         </Grid>
                     </Card>
@@ -61,10 +62,10 @@ export default function PlayCardUI(prop: PlayCardUIProps) {
                     <Card style={{ backgroundColor: "#696969" }}>
                         <Grid container spacing={2} alignItems="center" justifyContent="center">
                             <Grid item xs={5}>
-                                <SuitUI suit={c.suit} />
+                                <SuitUI suit={c.suit} fontsize={fontsize}/>
                             </Grid>
                             <Grid item xs={5}>
-                                <NumberUI card={c} />
+                                <NumberUI card={c} fontsize={fontsize}/>
                             </Grid>
                         </Grid>
                     </Card>

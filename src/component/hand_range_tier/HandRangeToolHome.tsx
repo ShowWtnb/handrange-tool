@@ -1,22 +1,41 @@
-import HandTable from '@/component/HandTable'
-import ActionSelector from '@/component/ActionSelector'
+import HandTable from '@/component/hand_range_tier/HandTable'
+import ActionSelector from '@/component/hand_range_tier/ActionSelector'
 import { Button, Grid, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Actions, YokosawaHandRangeTier } from '@/const/const_poker'
-import { useWindowSize } from './utils/useWindowSize'
+import { useWindowSize } from '../utils/useWindowSize'
+import { KuhnPoker } from '@/utils/counterfactual_regret_minimization/cfr'
+import styles from './style.module.css'
+const thresholdWidth = 1.5;
 
 export default function HandRangeToolHome() {
-    const [tierRange1, setTierRange1] = useState([YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_1]);
-    const [tierRange2, setTierRange2] = useState([YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_2]);
+    const [tierRange1, setTierRange1] = useState([YokosawaHandRangeTier.TIER_9, YokosawaHandRangeTier.TIER_1]);
+    const [tierRange2, setTierRange2] = useState([YokosawaHandRangeTier.TIER_9, YokosawaHandRangeTier.TIER_2]);
     const [widthHandTable, setWidthHandTable] = useState(6);
     const [width, height] = useWindowSize();
-    useEffect(()=>{
-        if(width > 1400){
+    const [widthRatio, setWidthRatio] = useState(0.0);
+    const [isVertical, setIsVertical] = useState(false);
+
+    useEffect(() => {
+        // console.log('HandRangeToolHome', width);
+        if (width > 1400) {
             setWidthHandTable(6);
-        }else{
+        } else {
             setWidthHandTable(12);
         }
-    },[width])
+        // const ratio = width / height;
+        setWidthRatio(width / height)
+        if (thresholdWidth < width / height) {
+            setIsVertical(false);
+        } else {
+            setIsVertical(true);
+        }
+    }, [width, height])
+
+    useEffect(() => {
+        var kuhnPoker = new KuhnPoker();
+        console.log('KuhnPoker', kuhnPoker.information_sets)
+    }, [])
 
     const handleActionChange = (event: any) => {
         // console.log('Home handleActionChange', event);
@@ -79,6 +98,7 @@ export default function HandRangeToolHome() {
     }
     return (
         <div>
+            {/* {widthRatio} */}
             <Grid container spacing={2} alignItems="center" justifyContent="center">
                 <Grid item xs={12}>
                     <Grid container spacing={1}>
@@ -86,20 +106,37 @@ export default function HandRangeToolHome() {
                         <Grid item xs={12}>
                             <ActionSelector eventHandler={handleActionChange} />
                         </Grid>
-                        <Grid item xs={widthHandTable}>
-                            <HandTable tierRange={tierRange1} title={'Opener'}/>
+                        <Grid item xs={12}>
+                            {isVertical ? (
+                                <div className={styles.homeVertical} >
+                                    {/* {widthRatio} */}
+                                    <div className={styles.open}>
+                                        <HandTable tierRange={tierRange1} title={'Opener'} />
+                                    </div>
+                                    <div className={styles.caller}>
+                                        <HandTable tierRange={tierRange2} title={'Caller'} />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className={styles.homeHorizontal}>
+                                    <div className={styles.open}>
+                                        <HandTable tierRange={tierRange1} title={'Opener'} />
+                                    </div>
+                                    <div className={styles.caller}>
+                                        <HandTable tierRange={tierRange2} title={'Caller'} />
+                                    </div>
+                                </div>
+                            )}
                         </Grid>
-                        <Grid item xs={widthHandTable}>
-                            <HandTable tierRange={tierRange2} title={'Caller'}/>
-                        </Grid>
+
                     </Grid>
                 </Grid>
-                <Grid item xs={2} >
+                <Grid item xs='auto' >
                     <Typography >
                         {'参考動画：'}
                     </Typography>
                 </Grid>
-                <Grid item xs={10}>
+                <Grid item xs='auto' alignItems='left' textAlign='left'>
                     <Button target="_blank" href="https://youtu.be/7vudIk1J_g0">【初公開】ヨコサワが実際に使っているハンドランキングがこちらです。</Button>
                 </Grid>
             </Grid>

@@ -56,6 +56,40 @@ export function GetNUMfromString(str: string): Num | undefined {
     }
     return undefined;
 }
+export function GetStringFromNUM(num?: Num): string {
+    switch (num) {
+        case Num.NUM_ACE:
+            return 'A';
+        case Num.NUM_KING:
+            return 'K';
+        case Num.NUM_QUEEN:
+            return 'Q';
+        case Num.NUM_JACK:
+            return 'J';
+        case Num.NUM_10:
+            return 'T';
+        case Num.NUM_9:
+            return '9';
+        case Num.NUM_8:
+            return '8';
+        case Num.NUM_7:
+            return '7';
+        case Num.NUM_6:
+            return '6';
+        case Num.NUM_5:
+            return '5';
+        case Num.NUM_4:
+            return '4';
+        case Num.NUM_3:
+            return '3';
+        case Num.NUM_2:
+            return '2';
+
+        default:
+            break;
+    }
+    return '';
+}
 
 export class PlayCard {
     suit?: Suit;

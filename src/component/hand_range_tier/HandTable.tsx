@@ -12,7 +12,7 @@ import { theme } from "@/const/theme/theme";
 const fontsize: number = 10.5;
 
 class PropHandTable {
-    tierRange: YokosawaHandRangeTier[] = [YokosawaHandRangeTier.TIER_8, YokosawaHandRangeTier.TIER_1];
+    tierRange: YokosawaHandRangeTier[] = [YokosawaHandRangeTier.TIER_9, YokosawaHandRangeTier.TIER_1];
     title?: string;
     mode?: string;
     onRangeChange?: any;
@@ -82,7 +82,7 @@ export default function HandTable(prop: PropHandTable) {
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#FFFFFF', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_7:
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#D8BFD8', color: '#000000' }}   >{str}</TableCell>;
-            case YokosawaHandRangeTier.TIER_8:
+            case YokosawaHandRangeTier.TIER_9:
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969', color: '#000000' }}   >{str}</TableCell>;
             default:
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969', color: '#000000' }}   >{str}</TableCell>;
@@ -109,7 +109,7 @@ export default function HandTable(prop: PropHandTable) {
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             case YokosawaHandRangeTier.TIER_7:
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
-            case YokosawaHandRangeTier.TIER_8:
+            case YokosawaHandRangeTier.TIER_9:
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;
             default:
                 return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#A9A9A9', color: '#000000' }}   >{str}</TableCell>;

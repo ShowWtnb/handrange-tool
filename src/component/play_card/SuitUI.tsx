@@ -3,11 +3,12 @@ import { Typography } from "@mui/material";
 
 export class SuitUIProps{
     suit?: Suit
+    fontsize?:string = '100%';
 }
 
 export default function SuitUI(props: SuitUIProps) {
     var suit = props.suit;
-    const fontsize = '5em';
+    const fontsize = props.fontsize;
     if (suit != undefined) {
         switch (suit) {
             case Suit.SUIT_SPADES:

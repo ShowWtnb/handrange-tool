@@ -3,6 +3,9 @@ import { GetTurboColor } from "@/const/theme/TurboColor";
 import { AttachMoney, MoneyOff } from "@mui/icons-material";
 import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, ToggleButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useWindowSize } from '../utils/useWindowSize'
+import styles from './style.module.css'
+
 
 const fontsize: number = 10.5;
 
@@ -12,39 +15,62 @@ class PropPowerNumberChartHome {
 
 export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
     const [selected, setSelected] = useState(false);
+    const [width, height] = useWindowSize();
+
 
     function GetCell(tier: YokosawaHandRangeTier, str: string, pow: number) {
         if (selected) {
             if (pow < parseFloat(powNum)) {
-                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969' }}  >{str}<br />{pow}</TableCell>;
+                return (
+                    // <div className={styles.cell}>
+                        <TableCell className={styles.cell} key={str} align="center" sx={{ background: '#696969' }}  >{str}<br />{pow}</TableCell>
+                    // </div>
+                );
             } else {
                 var color = GetTurboColor(pow, 140);
-                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: color }}  >{str}<br />{pow}</TableCell>;
+                return (
+                    // <div className={styles.cell}>
+                        <TableCell className={styles.cell} key={str} align="center" sx={{ background: color }}  >{str}<br />{pow}</TableCell>
+                    // </div>
+                );
             }
         } else {
             if (pow == -1) {
-                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: '#696969' }}  >{str}<br />{pow}</TableCell>;
+                return (
+                    // <div className={styles.cell}>
+                        <TableCell className={styles.cell} key={str} align="center" sx={{  background: '#696969' }}  >{str}<br />{pow}</TableCell>
+                    // </div>
+                );
             } else {
                 var color = GetTurboColor(pow, 140);
-                return <TableCell key={str} align="center" sx={{ fontSize: fontsize, width: 5, background: color }}  >{str}<br />{pow}</TableCell>;
+                return (
+                    // <div className={styles.cell}>
+                        <TableCell className={styles.cell} key={str} align="center" sx={{  background: color }}  >{str}<br />{pow}</TableCell>
+                    // </div >
+                );
             }
         }
 
     }
     const GetHandRange = () => {
         return (
-            <TableBody>
+            <TableBody className={styles.tableBody}>
                 {PorkerHands.map((row, i = 0) => (
-                    <TableRow key={i++}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 30 }}
-                    >
-                        {row.map((c) => {
-                            return GetCell(c.YokosawaTier, c.HandStr, c.PowerNumber);
-                        })}
-                    </TableRow>
+                    // <div className={styles.row}>
+                        <TableRow key={i++} className={styles.row}
+                            // style={{
+                            //     height: 50,
+                            // }}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 }, }}
+                        >
+                            {row.map((c) => {
+                                return GetCell(c.YokosawaTier, c.HandStr, c.PowerNumber)
+                            })}
+                        </TableRow>
+                    // </div>
                 ))}
             </TableBody>
-        );
+        )
     }
 
     const [stack, setStack] = useState('100');
@@ -200,22 +226,25 @@ export default function PowerNumberChartHome(prop: PropPowerNumberChartHome) {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 100 }} aria-label="simple table">
-                                    {GetHandRange()}
-                                </Table>
-                            </TableContainer>
+                        <Grid item xs={12} alignItems="center" justifyContent="center">
+                            {/* <div >
+                                <div className={styles.home}> */}
+                                    <TableContainer component={Paper} className={styles.home}>
+                                        <Table className={styles.table} sx={{ minWidth: 100 }} aria-label="simple table">
+                                            {GetHandRange()}
+                                        </Table>
+                                    </TableContainer>
+                                {/* </div>
+                            </div> */}
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={2} >
+                <Grid item xs='auto' >
                     <Typography >
                         {'参考動画：'}
                     </Typography>
                 </Grid>
-                <Grid item xs={10}>
-                    {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/7vudIk1J_g0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> */}
+                <Grid item xs='auto' alignItems='left' textAlign='left'>
                     <Button target="_blank" href="https://youtu.be/VtdTuVJEXLU">トーナメントに勝つために必要なたった４つのこと。</Button>
                 </Grid>
             </Grid>

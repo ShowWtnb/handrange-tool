@@ -54,7 +54,7 @@ export default function HandRangeSelector(prop: HandSelectorProps) {
 
     const GetItem = (str: string) => {
         var t = GetTierFromString(str);
-        var style = GetTierStyle(YokosawaHandRangeTier.TIER_8);
+        var style = GetTierStyle(YokosawaHandRangeTier.TIER_9);
         if (t != undefined) {
             style = GetTierStyle(t);
         }

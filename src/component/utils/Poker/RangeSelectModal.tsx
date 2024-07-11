@@ -1,4 +1,4 @@
-import HandTable from "@/component/HandTable";
+import HandTable from "@/component/hand_range_tier/HandTable";
 import { PorkerHands, YokosawaHandRangeTier } from "@/const/const_poker";
 import { modalStyle, styleRangeSelectModal } from "@/const/theme/theme";
 import { Box, Modal } from "@mui/material";
